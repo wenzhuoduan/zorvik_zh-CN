@@ -1,0 +1,9 @@
+id: mocking
+title: Mock API
+summary: 搭一台临时的替身服务器，让它像真 API 一样作答，这样后端还没好你也能开发、能测试。
+color: "#8A4F9E"
+image: mocking
+badge:
+  id: mock-master
+  name: Mock 大师
+  description: 搭得出跟真家伙一样的替身服务器。

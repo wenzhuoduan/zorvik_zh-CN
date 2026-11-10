@@ -1,0 +1,9 @@
+id: auth
+title: 身份与鉴权
+summary: 用 Basic 鉴权、API Key、Bearer 令牌、OAuth 2.0 和 Cookie 向 API 证明你是谁，并读懂 401 和 403 在说什么。
+color: "#C9A227"
+image: auth
+badge:
+  id: token-tamer
+  name: 令牌驯服者
+  description: 把 API 要求的每种登录方式都走了一遍。

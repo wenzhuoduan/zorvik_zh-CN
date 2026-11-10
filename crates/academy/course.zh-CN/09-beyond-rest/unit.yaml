@@ -1,0 +1,9 @@
+id: beyond-rest
+title: "REST 之外：GraphQL 与 gRPC"
+summary: 用 GraphQL 精确地只要你要的数据，用 gRPC 调用又快又有严格类型的服务。
+color: "#B8478F"
+image: beyond-rest
+badge:
+  id: query-crafter
+  name: 查询匠人
+  description: 除了 REST，还会说 GraphQL 和 gRPC。

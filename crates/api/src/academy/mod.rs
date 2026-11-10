@@ -537,6 +537,13 @@ fn lesson(id: &str) -> ApiResult<&'static Lesson> {
     course()?.lesson(id).ok_or_else(|| ApiError::new("notFound", format!("No lesson '{id}'")))
 }
 
+/// The UI says which language it shows; Chinese gets the translated course, and
+/// anything else (or nothing) the original English one.
+fn use_locale(locale: Option<&str>) {
+    let chinese = locale.is_some_and(|l| l.to_ascii_lowercase().starts_with("zh"));
+    zorvik_academy::set_chinese(chinese);
+}
+
 /// A random value for `{{secret.*}}`: easy to read and type.
 fn random_secret() -> String {
     const WORDS: &[&str] = &[
@@ -566,7 +573,15 @@ impl Api {
             step: usize,
         }
         match method {
-            "academy.course" => ok(course_view(course()?)),
+            "academy.course" => {
+                #[derive(Deserialize)]
+                struct P {
+                    locale: Option<String>,
+                }
+                let P { locale } = params(p)?;
+                use_locale(locale.as_deref());
+                ok(course_view(course()?))
+            }
             "academy.progress" => {
                 #[derive(Deserialize)]
                 #[serde(rename_all = "camelCase")]
@@ -580,7 +595,13 @@ impl Api {
                 ok(self.academy_progress_view()?)
             }
             "academy.lesson" => {
-                let Id { id } = params(p)?;
+                #[derive(Deserialize)]
+                struct P {
+                    id: String,
+                    locale: Option<String>,
+                }
+                let P { id, locale } = params(p)?;
+                use_locale(locale.as_deref());
                 let lesson = lesson(&id)?;
                 self.with_progress(|p| {
                     p.last_lesson = Some(id.clone());

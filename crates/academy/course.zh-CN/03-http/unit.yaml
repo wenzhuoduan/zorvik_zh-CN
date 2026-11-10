@@ -1,0 +1,9 @@
+id: http
+title: HTTP 基础
+summary: Web 和大多数 API 共同的语言：从请求与方法，到状态码、请求头与耗时。
+color: "#3A9A5B"
+image: http
+badge:
+  id: status-sage
+  name: 状态码智者
+  description: 像老手一样读请求、响应和状态码。

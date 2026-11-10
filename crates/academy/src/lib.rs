@@ -8,6 +8,7 @@ pub mod progress;
 
 use std::collections::HashSet;
 use std::sync::OnceLock;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use serde::de::DeserializeOwned;
 
@@ -15,11 +16,28 @@ pub use model::*;
 
 include!(concat!(env!("OUT_DIR"), "/course_files.rs"));
 
-/// The course, parsed once. An error names the file that is wrong (the course tests
-/// catch it before a release).
+/// Whether the app asked for the Chinese course. English is the default, so tests and
+/// agents see the original files; the UI switches it when its language is Chinese.
+static CHINESE: AtomicBool = AtomicBool::new(false);
+
+pub fn set_chinese(on: bool) {
+    CHINESE.store(on, Ordering::Relaxed);
+}
+
+pub fn is_chinese() -> bool {
+    CHINESE.load(Ordering::Relaxed)
+}
+
+/// The course, parsed once per language. An error names the file that is wrong (the
+/// course tests catch it before a release).
+///
+/// Files under `course.zh-CN/` replace their English twins; a lesson without a
+/// translation stays English, so the course can be translated a unit at a time.
 pub fn course() -> Result<&'static Course, &'static str> {
-    static COURSE: OnceLock<Result<Course, String>> = OnceLock::new();
-    COURSE.get_or_init(|| load(COURSE_FILES)).as_ref().map_err(String::as_str)
+    static ENGLISH: OnceLock<Result<Course, String>> = OnceLock::new();
+    static TRANSLATED: OnceLock<Result<Course, String>> = OnceLock::new();
+    let (cell, files) = if is_chinese() { (&TRANSLATED, COURSE_FILES_ZH) } else { (&ENGLISH, COURSE_FILES) };
+    cell.get_or_init(|| load(files)).as_ref().map_err(String::as_str)
 }
 
 /// YAML parsed through JSON values, so enums read as `{variant: value}` maps.

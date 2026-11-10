@@ -1,0 +1,9 @@
+id: welcome
+title: 欢迎来到训练营
+summary: 熟悉 Zorvik 的操作，并发出你的第一个请求。
+color: "#4A90C2"
+image: welcome
+badge:
+  id: first-contact
+  name: 初次接触
+  description: 发出了第一个请求，并把它保存了下来。

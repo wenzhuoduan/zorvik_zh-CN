@@ -1,0 +1,9 @@
+id: dns
+title: "DNS：互联网的通讯录"
+summary: api.example.com 这样的名字如何变成地址、一个名字能有哪些记录，以及是谁在回答你的查询。
+color: "#7A5CC4"
+image: dns
+badge:
+  id: dns-detective
+  name: DNS 侦探
+  description: 一路追查名字，找到了它对应的地址。

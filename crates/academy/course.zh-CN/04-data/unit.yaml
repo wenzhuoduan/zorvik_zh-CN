@@ -1,0 +1,9 @@
+id: data
+title: 发送数据
+summary: 精确地发出服务器期望的东西——从查询参数、路径参数，到 JSON、表单、文件和内容类型。
+color: "#D99A2B"
+image: data
+badge:
+  id: payload-pro
+  name: 载荷高手
+  description: 每次都能发出服务器期望的那份数据。

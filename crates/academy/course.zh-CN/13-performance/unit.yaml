@@ -1,0 +1,9 @@
+id: performance
+title: 性能与负载测试
+summary: 在用户用惨痛的方式发现之前，先量出你的 API 答得多快、能扛多少流量。
+color: "#C4453A"
+image: performance
+badge:
+  id: load-legend
+  name: 负载传奇
+  description: 在用户之前找到崩溃点。

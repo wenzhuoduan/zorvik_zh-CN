@@ -1,0 +1,9 @@
+id: organize
+title: 像老手一样组织
+summary: 把环境、秘密和文件夹收拾整齐，并用导入导出让请求进出 Zorvik。
+color: "#4F5DB8"
+image: organize
+badge:
+  id: workspace-architect
+  name: 工作区架构师
+  description: 把请求、环境和秘密都收拾得井井有条。

@@ -1,0 +1,9 @@
+id: sockets
+title: "原始套接字：TCP 与 UDP"
+summary: 走到 HTTP 下面去：打开原始 TCP 连接、自己给消息分帧、发 UDP 数据报，并看清经过中继的每一个字节。
+color: "#B8683A"
+image: sockets
+badge:
+  id: socket-smith
+  name: 套接字工匠
+  description: 一个字节一个字节地跟服务器对话。

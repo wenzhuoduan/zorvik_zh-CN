@@ -1,0 +1,9 @@
+id: testing
+title: 测试 API
+summary: 写出会检查每个响应的测试、把请求串起来、用数据文件跑整个文件夹，并让 API 守住它自己的规范。
+color: "#2A9DB5"
+image: testing
+badge:
+  id: test-pilot
+  name: 试飞员
+  description: 能在用户之前抓到 bug 的测试作者。

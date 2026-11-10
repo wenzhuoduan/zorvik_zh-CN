@@ -1,0 +1,9 @@
+id: networks
+title: 网络是怎么通信的
+summary: 地址、端口、连接和往返时间——每个请求都依赖这些基础。
+color: "#2F8F8B"
+image: networks
+badge:
+  id: packet-pioneer
+  name: 数据包先驱
+  description: 弄清了计算机如何找到彼此并互相通信。

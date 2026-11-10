@@ -1,0 +1,9 @@
+id: automate
+title: "自动化：CLI、CI 与 AI Agent"
+summary: 在终端里跑你的 API 测试，让每条流水线都以测试结果为准，并让 AI Agent 在 Zorvik 里替你干活，同时你始终握着方向盘。
+color: "#4E6A8C"
+image: automate
+badge:
+  id: automation-ace
+  name: 自动化高手
+  description: 不用点一下按钮就能跑 API 测试。

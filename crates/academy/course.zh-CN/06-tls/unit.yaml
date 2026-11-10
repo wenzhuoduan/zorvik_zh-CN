@@ -1,0 +1,9 @@
+id: tls
+title: 安全传输
+summary: 看清 HTTPS 到底保护了什么、读懂证书链、用安全的方式修复信任错误，并认识 HTTP/2 与 HTTP/3。
+color: "#2F6F73"
+image: tls
+badge:
+  id: tls-guardian
+  name: TLS 守卫
+  description: 既知道 HTTPS 保护什么，也知道怎么修信任错误。

@@ -1,0 +1,9 @@
+id: realtime
+title: "实时通信：WebSocket、SSE、MQTT、Socket.IO"
+summary: 别再一次次问「有新消息吗」，让服务器把更新推给你——WebSocket、Server-Sent Events、MQTT 和 Socket.IO 各有一套。
+color: "#2E6FB5"
+image: realtime
+badge:
+  id: stream-surfer
+  name: 流冲浪者
+  description: 双向驾驭实时数据流。

@@ -1,0 +1,10 @@
+id: capstone
+title: "结业项目：发布上线"
+summary: 把所有东西合到一起，把一个真实 API 从契约带到上线，然后毕业。
+color: "#5B3FA8"
+image: capstone
+capstone: true
+badge:
+  id: graduate
+  name: 毕业生
+  description: 完成了 Zorvik 训练营。

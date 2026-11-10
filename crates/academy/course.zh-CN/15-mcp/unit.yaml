@@ -1,0 +1,9 @@
+id: mcp
+title: "MCP：给 AI Agent 用的工具"
+summary: 为什么 AI 应用都说模型上下文协议，以及怎样调用、测试和搭建 MCP 服务器，让依赖它们的 Agent 不栽跟头。
+color: "#8A4B7C"
+image: mcp
+badge:
+  id: context-connector
+  name: 上下文连接器
+  description: 会调用、测试并搭建 MCP 服务器。
