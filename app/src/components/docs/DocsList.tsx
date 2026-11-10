@@ -2,6 +2,7 @@
 import { BookOpen, Keyboard } from "lucide-react";
 import { openDocs } from "../../store/tabs";
 import { TOPICS } from "../../i18n/docs";
+import { useLanguage } from "../../i18n/useLanguage";
 import { TOPIC_ICONS } from "./media";
 
 function Item({ icon, label, hint, onClick, testId }: { icon: React.ReactNode; label: string; hint?: string; onClick: () => void; testId?: string }) {
@@ -17,6 +18,7 @@ function Item({ icon, label, hint, onClick, testId }: { icon: React.ReactNode; l
 }
 
 export function DocsList() {
+  useLanguage(); // 切换界面语言时重新渲染，TOPICS 已是另一种语言的标题
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-auto px-2 py-1" data-testid="docs-list">
       <Item icon={<BookOpen size={13} />} label="Start here" hint="Overview and quick start" onClick={() => openDocs(null)} testId="docs-start" />

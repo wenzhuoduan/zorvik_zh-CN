@@ -12,7 +12,8 @@
 | Rust 侧文案 | 已覆盖常用提示，剩余 1310 条 | `node i18n/tools/rust.mjs`（多为内部错误与测试夹具） |
 | 应用内文档 | 100%（247 处字符串） | `node i18n/tools/docs-zh.mjs` |
 | 课程 | **97 / 97 个文件（100%）** | `node i18n/tools/course.mjs` |
-| 验证基线 | tsc / vite build / vitest 448 / cargo test -p zorvik-academy 14 / e2e 73（英文模式） | 见 README 第 5 节 |
+| 验证基线 | tsc / vite build / vitest 452 / cargo test -p zorvik-academy 14 / e2e 73（英文模式） | 见 README 第 5 节 |
+| 语言开关 | 顶栏「中 / EN」即时切换，记忆在 `zorvik.locale` | 实机点一下即可；`VITE_ZORVIK_LOCALE` 钉死时按钮隐藏 |
 
 最近完成：P0 骨架 → P1–P3 界面与文档全扫 → P6 实机走查 → P7 文档整篇替换 → P4 课程机制 + `00-welcome` 到 `16-capstone`（16 个单元，97 / 97 个文件）→ P5 原生层前端 → P9 长尾字段 → P8 英文 e2e 回归 → P10 整体复查（术语纠偏 + 学院页补全 + 动态拼接句）→ P11 新建负载测试/服务器场景清理（新审计工具 `audit.mjs`/`lookup.mjs`）→ **P12 折叠区与 Rust 侧文案（审计器补三个盲区，`rust.mjs` 首轮 1424 → 1310）**。
 
@@ -63,6 +64,7 @@
 - [x] P10 复查：学院页段位/徽章/动态短语、命令面板对象字面量、CodeMirror 占位符、117+30+3+1 条动态拼接模板（未译 180 → 176）
 - [x] P11 新建负载测试/服务器场景（审计器升级，未译 545 → 83）
 - [x] P12 折叠区（匹配条件/应答序列/故障注入/工具页）+ Rust 侧首批 114 条（1424 → 1310）
+- [x] P13 顶栏「中 / EN」语言开关（可逆 DOM 翻译 + 文档跟随 + 记忆），vitest 448 → 452
 - [ ] 继续补 Rust 侧剩余 1310 条：优先 `crates/workspace`（文件/YAML/Git 报错）与 `crates/engine`（请求失败原因），`node i18n/tools/rust.mjs` 按目录分批；`#[cfg(test)]` 里的夹具跳过
 - [ ] 剩余 176 条未译里，绝大多数是格式名、协议名、语言名与静态扫描误抓的代码片段（`HTTP/3`、`Kotlin`、`) : sse ? (`），可翻整句已基本清完；后续写新功能或合并上游后按 `--missing` 抽查即可
 - [ ] 已知故意保留英文：`Body` / `Headers` / `XP` / 段位与徽章以外的 HTTP 状态名 / canvas 结业证书 / macOS 菜单。新增文案时别"顺手"把它们译了

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { translateDom } from "./dom";
+import { revertDom, translateDom } from "./dom";
 import { usePack } from "./translate";
 
 let host: HTMLElement;
@@ -46,6 +46,24 @@ describe("translateDom", () => {
   it("is idempotent", () => {
     host.innerHTML = "<button>Settings</button>";
     translateDom(host);
+    translateDom(host);
+    expect(host.textContent).toBe("设置");
+  });
+
+  it("restores the English original when the language goes back", () => {
+    host.innerHTML = '<button title="Close">\n  Settings\n</button>';
+    translateDom(host);
+    expect(host.querySelector("button")!.textContent).toBe("\n  设置\n");
+    expect(host.querySelector("button")!.getAttribute("title")).toBe("关闭");
+    revertDom();
+    expect(host.querySelector("button")!.textContent).toBe("\n  Settings\n");
+    expect(host.querySelector("button")!.getAttribute("title")).toBe("Close");
+  });
+
+  it("can translate again after reverting", () => {
+    host.innerHTML = "<button>Settings</button>";
+    translateDom(host);
+    revertDom();
     translateDom(host);
     expect(host.textContent).toBe("设置");
   });

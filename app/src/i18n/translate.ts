@@ -23,9 +23,9 @@ const PACKS: Record<string, Pack> = {
 let pack: Pack | null = null;
 const compiled = new Map<string, RegExp>();
 
-/** 载入某个语言的词典；不支持的语言等于关闭翻译。 */
-export function usePack(locale: string): void {
-  pack = PACKS[locale] ?? null;
+/** 载入某个语言的词典；null 或没有词典的语言等于关闭翻译（界面回到英文原文）。 */
+export function usePack(locale: string | null): void {
+  pack = locale === null ? null : (PACKS[locale] ?? null);
   compiled.clear();
 }
 

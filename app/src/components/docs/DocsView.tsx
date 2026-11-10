@@ -6,6 +6,7 @@ import type { ToolTab } from "../../store/tabs";
 import { useWorkspace } from "../../store/workspace";
 import { cx, Kbd } from "../ui";
 import { QUICK_START, SHORTCUTS, TOPICS } from "../../i18n/docs";
+import { useLanguage } from "../../i18n/useLanguage";
 import { docImage, TOPIC_ICONS } from "./media";
 
 /** `[mod+N]` → a keycap, `code` → monospace. */
@@ -41,6 +42,7 @@ function Keys({ combo }: { combo: string }) {
 }
 
 export function DocsView({ tab }: { tab: ToolTab }) {
+  useLanguage(); // 切换界面语言时重新渲染，正文已经是另一种语言
   const scroller = useRef<HTMLDivElement>(null);
   const version = useWorkspace((s) => s.appInfo?.version);
   const topic = typeof tab.state.topic === "string" ? tab.state.topic : null;

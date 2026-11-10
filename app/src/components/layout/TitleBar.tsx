@@ -3,8 +3,10 @@
 // window controls on the right. Empty areas drag the window.
 import { useEffect, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Bot, Check, ChevronDown, Cookie, FolderOpen, GraduationCap, Keyboard, Layers, LayoutPanelLeft, LogOut, Minus, Monitor, Moon, Settings, SlidersHorizontal, Square, Sun, X } from "lucide-react";
+import { Bot, Check, ChevronDown, Cookie, FolderOpen, GraduationCap, Keyboard, Languages, Layers, LayoutPanelLeft, LogOut, Minus, Monitor, Moon, Settings, SlidersHorizontal, Square, Sun, X } from "lucide-react";
 import { DropdownMenu } from "radix-ui";
+import { languageLocked, toggleLanguage } from "../../i18n";
+import { useLanguage } from "../../i18n/useLanguage";
 import { isMac, pickFolder } from "../../lib/platform";
 import { errorMessage, isTauri } from "../../lib/rpc";
 import { isBootcampPath, openAcademy, setMode, useAcademy, useInBootcamp } from "../../store/academy";
@@ -173,6 +175,7 @@ function RightTools() {
       <RunningServers />
       <EnvironmentPicker />
       <span className="mx-1 h-4 w-px bg-line" />
+      <LanguageButton />
       <IconButton label="Cookies" onClick={() => openModal({ type: "cookies" })}>
         <Cookie size={15} />
       </IconButton>
@@ -184,6 +187,29 @@ function RightTools() {
       </IconButton>
       <SettingsButton />
     </>
+  );
+}
+
+/**
+ * 中 ⇄ 英：汉化之后想确认"原文到底怎么写的"时用。
+ * 徽标显示的是当前语言（中 / EN），点击切到另一种。
+ */
+function LanguageButton() {
+  const language = useLanguage();
+  if (languageLocked()) return null; // 环境变量钉死语言时（e2e）不显示
+  const chinese = language === "zh-CN";
+  const label = chinese ? "界面语言：中文（点击查看英文原文）" : "UI language: English (click for Chinese)";
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={() => toggleLanguage()}
+      className="inline-flex h-[26px] shrink-0 items-center gap-1 rounded-lg px-1.5 text-[11px] font-semibold text-muted transition-colors hover:bg-hover hover:text-fg"
+    >
+      <Languages size={14} />
+      <span className="tabular-nums tracking-wide">{chinese ? "中" : "EN"}</span>
+    </button>
   );
 }
 

@@ -27,12 +27,40 @@ function opaque(element: Element | null): boolean {
 /** 中文标点前面不留空格：`{{x}} ，以及` 读起来是错的。左括号也算（`p50 延迟 （毫秒）` 要连在一起）。 */
 const NO_SPACE_BEFORE = /^[，。、；：！？（）【】《》〈〉「」『』“”‘’%,.;:!?)\]]/;
 
+// 顶栏的语言开关要能切回英文原文，所以翻译时把原文记下来（切换时逐条还原）。
+// 节点被 React 丢掉后条目会失效，攒到一定量就在还原时顺手清一遍。
+const originalText = new Map<Text, string>();
+const originalAttrs = new Map<Element, Map<string, string>>();
+const PRUNE_AT = 20_000;
+
+function rememberText(node: Text, original: string): void {
+  originalText.set(node, original);
+  if (originalText.size > PRUNE_AT) prune();
+}
+
+function rememberAttr(element: Element, name: string, original: string): void {
+  let record = originalAttrs.get(element);
+  if (!record) {
+    record = new Map();
+    originalAttrs.set(element, record);
+    if (originalAttrs.size > PRUNE_AT) prune();
+  }
+  record.set(name, original);
+}
+
+/** 丢掉已经不挂在文档上的节点记录，别让长期运行的窗口一直涨内存。 */
+function prune(): void {
+  for (const node of originalText.keys()) if (!node.isConnected) originalText.delete(node);
+  for (const element of originalAttrs.keys()) if (!element.isConnected) originalAttrs.delete(element);
+}
+
 /** 只翻译整段文本，保留 JSX 留下的首尾空白，避免破坏相邻元素之间的间距。 */
 function translateTextNode(node: Text): void {
   const raw = node.nodeValue;
   if (!raw || !/\S/.test(raw)) return;
   const translated = tf(raw);
   if (translated === null || translated === raw) return;
+  rememberText(node, raw);
   const lead = NO_SPACE_BEFORE.test(translated) ? "" : (raw.match(/^\s*/)?.[0] ?? "");
   const trail = raw.match(/\s*$/)?.[0] ?? "";
   const next = `${lead}${translated}${trail}`;
@@ -44,8 +72,31 @@ function translateAttributes(element: Element): void {
     const value = element.getAttribute(name);
     if (!value) continue;
     const translated = tf(value);
-    if (translated !== null && translated !== value) element.setAttribute(name, translated);
+    if (translated === null || translated === value) continue;
+    rememberAttr(element, name, value);
+    element.setAttribute(name, translated);
   }
+}
+
+/** 把所有译文还原成英文原文（切回英文时用）。 */
+export function revertDom(): void {
+  for (const [node, text] of originalText) if (node.isConnected) node.nodeValue = text;
+  for (const [element, attrs] of originalAttrs) {
+    if (!element.isConnected) continue;
+    for (const [name, value] of attrs) element.setAttribute(name, value);
+  }
+  originalText.clear();
+  originalAttrs.clear();
+}
+
+/** 语言切换期间要停下来：还原会把文本改回英文，观察器看到又会立刻翻一遍。 */
+export interface DomTranslation {
+  /** 断开观察器（切换前调用）。 */
+  suspend(): void;
+  /** 恢复观察（切换完成后调用）。 */
+  resume(): void;
+  /** 永久停止。 */
+  stop(): void;
 }
 
 function translateElement(element: Element): void {
@@ -72,8 +123,16 @@ export function translateDom(node: Node): void {
   if (node instanceof Element) translateElement(node);
 }
 
-/** 开一个观察器，把后续渲染出来的英文也翻掉；返回停止函数。 */
-export function startDomTranslation(root: HTMLElement): () => void {
+const OBSERVE = {
+  childList: true,
+  subtree: true,
+  characterData: true,
+  attributes: true,
+  attributeFilter: ATTRIBUTES,
+} as const;
+
+/** 开一个观察器，把后续渲染出来的英文也翻掉。 */
+export function startDomTranslation(root: HTMLElement): DomTranslation {
   translateDom(root);
   const observer = new MutationObserver((records) => {
     for (const record of records) {
@@ -89,12 +148,16 @@ export function startDomTranslation(root: HTMLElement): () => void {
       }
     }
   });
-  observer.observe(root, {
-    childList: true,
-    subtree: true,
-    characterData: true,
-    attributes: true,
-    attributeFilter: ATTRIBUTES,
-  });
-  return () => observer.disconnect();
+  observer.observe(root, OBSERVE);
+  return {
+    suspend() {
+      observer.disconnect();
+    },
+    resume() {
+      observer.observe(root, OBSERVE);
+    },
+    stop() {
+      observer.disconnect();
+    },
+  };
 }

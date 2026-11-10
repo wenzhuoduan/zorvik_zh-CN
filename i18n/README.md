@@ -22,6 +22,8 @@ cargo run -p zorvik-devbridge      # 终端 1，仓库根
 cd app; npm run dev                # 终端 2
 ```
 
+**界面上随时切换语言**：顶栏 Cookie 左边的「中 / EN」按钮。默认中文，点一下整屏回到上游英文原文，再点回中文；选择存在 `localStorage` 的 `zorvik.locale` 里，下次启动沿用。用 `VITE_ZORVIK_LOCALE` 钉死语言时（e2e）按钮自动隐藏。
+
 校验与维护脚本（全部在仓库根执行，无需 npm script，避免改 `app/package.json`）：
 
 ```powershell
@@ -46,7 +48,7 @@ node i18n/tools/check.mjs           # 词典体检（模板、占位符、过期
 
 | 层 | 对象 | 做法 | 状态 |
 |---|---|---|---|
-| **L1** | 前端界面文案、`confirm`/`toast` 提示、应用内文档、**Rust 错误消息** | 运行时词典：精确匹配 + 正则模板 + DOM 观察器 | 界面 91.7%（2774 条 + 295 条模板），应用内文档 100% |
+| **L1** | 前端界面文案、`confirm`/`toast` 提示、应用内文档、**Rust 错误消息** | 运行时词典：精确匹配 + 正则模板 + DOM 观察器（翻译时记下原文，顶栏可一键切回英文） | 界面 91.7%（2774 条 + 295 条模板），应用内文档 100% |
 | **L2** | Training Bootcamp 课程正文（`crates/academy/course/`，97 个文件 / 约 10.4k 行） | Rust 侧镜像目录 `crates/academy/course.zh-CN/`（同相对路径，进度按路径记录），`build.rs` 生成中英两张表，缺的中文文件回退英文 | 机制完成，97 / 97 个文件已译（100%） |
 | **L3** | 不走 DOM 的原生文案：`lib/platform.ts` 原生对话框标题/过滤器、`Intl.RelativeTimeFormat`、CodeMirror 占位符与「显示更多」、窗口标题、macOS 自建菜单项 | 前端就地包 `t()`；菜单与窗口标题、canvas 结业证书按术语表保持英文 | 前端已完成，Rust 侧按设计保持英文 |
 
@@ -54,15 +56,17 @@ node i18n/tools/check.mjs           # 词典体检（模板、占位符、过期
 
 ```
 app/src/i18n/
-  index.ts                     # initI18n()：main.tsx 唯一入口
-  config.ts                    # 语言选择（VITE_ZORVIK_LOCALE / MODE=test 关闭）
+  index.ts                     # initI18n()：main.tsx 唯一入口；setLanguage/toggleLanguage
+  config.ts                    # 语言选择：VITE_ZORVIK_LOCALE > localStorage > 默认 zh-CN（MODE=test 关）
   translate.ts                 # 词典引擎：normalize → 精确 → 正则 → null
-  dom.ts                       # DOM 层：文本节点 + placeholder/title/aria-label/alt + MutationObserver
-  docs.ts                      # 应用内文档按语言选整篇（见下）
+  dom.ts                       # DOM 层：文本节点 + placeholder/title/aria-label/alt + MutationObserver，
+                               # 并把英文原文记在 Map 里，revertDom() 一次性还原
+  useLanguage.ts               # React hook：语言变了重新渲染（顶栏按钮、文档列表/正文用）
+  docs.ts                      # 应用内文档按语言选整篇，切换时就地换一份（见下）
   docs.zh-CN.ts                # 由 tools/docs-zh.mjs 生成的中文文档正文，不要手改
   locales/zh-CN/ui.json        # 键 = 英文原文，值 = 中文
   locales/zh-CN/patterns.json  # 拼接文案：正则 + {0} {1} 占位
-  *.test.ts                    # 13 个单测
+  *.test.ts                    # 17 个单测
 i18n/
   README.md                    # 本文
   stale-allow.json             # 第三方库（CodeMirror 等）的文案，不算过期条目
@@ -77,6 +81,16 @@ i18n/
   tools/check.mjs              # 词典校验
   hooks/apply.mjs              # 幂等重放 3 处挂载点（main.tsx + 两个文档组件）
 ```
+
+**语言开关的顺序**（`index.ts` 的 `setLanguage`，顺序错了会互相打架）：
+
+1. `translation.suspend()` 断开 MutationObserver——还原动作本身会改文本，观察器看到就会再翻一遍；
+2. `revertDom()` 把记下的英文原文写回去，同时清空记录；
+3. `usePack("zh-CN"` 或 `null)` 换词典；
+4. 切到中文时整屏重扫一遍（英文时不扫）；
+5. `resume()` 恢复观察器，通知 `useLanguage()` 的订阅者重新渲染（文档列表/正文靠它）。
+
+`dom.ts` 里两张表记原文：`originalText`（文本节点）、`originalAttrs`（placeholder/title/aria-label/alt）；超过 2 万条就顺手清掉已经从文档上摘掉的节点，长期开着窗口也不会一直涨。
 
 ### 文档正文：整篇切换
 
@@ -232,6 +246,7 @@ $env:VITE_ZORVIK_LOCALE="en"; npm run e2e
 
 ## 6. 已知限制
 
+- **语言开关切不到的地方**：课程正文来自 Rust 侧的中文镜像（`crates/academy/course.zh-CN/`），结业证书是 canvas 画的，两者在英文模式下仍是中文；`CodeEditor` 的占位符、组件渲染时调 `t()` 得到的文字要等下一次渲染才跟着变（DOM 层直接改的那部分立即生效）。
 - macOS 自建菜单项保持英文：Rust 侧没有运行时语言开关，预定义项（关于/隐藏/最小化…）本就跟随 macOS 系统语言。`tauri.conf.json` 的窗口标题 `Zorvik` 是产品名，按术语表不译。
 - 结业证书是 canvas 画出来的（`academy/Certificate.tsx` 的 `fillText`），DOM 层碰不到：按"文凭"惯例保持英文，不做翻译。要翻得改源码里的 `center()` 调用，并把中文字体塞进 canvas。
 - 更新提示在 `UpdateSettings.tsx` / `UpdateNotice.tsx`（React），动态拼接句已由 `patterns.json` 的 `Version … is out`、`Up to date (checked …)`、`Zorvik … is ready` 等模板覆盖。
@@ -436,6 +451,14 @@ $env:VITE_ZORVIK_LOCALE="en"; npm run e2e
 - 数字：词典 2626 → **2774 条**，模板 238 → **295 条**；`extract` 覆盖率 91.7%（未译 170，全部是示例值/语言名/代码片段），`audit` 剩余 281 条同属噪音。
 - **修掉一个隐蔽 bug**：`merge.mjs` 原来按原文原样存键，JSX 拆出来的节点带前导空格（`" means the host refused;"`），存进去永远匹配不上（运行时查词前会归一化空白）。现在 merge 与词典都做同一套归一化，并把 5 条带空格的旧键改正、2 条重复键清掉。
 - 验证：`tsc`、`vite build`、`vitest`（448 通过）、`check.mjs`、`course.mjs`（97/97）；实机确认 Mock 服务器的「匹配条件 / 应答序列」展开后全中文。
+
+**2026-11-10　P13 界面语言开关（中 ⇄ 英）**
+
+- 顶栏 Cookie 左边加「中 / EN」按钮（`TitleBar.tsx` 的 `LanguageButton`）：默认中文，点一下整屏回到上游英文原文，确认汉化有没有歧义；再点回中文。徽标显示当前语言，悬浮提示说明点击后切到哪边。
+- 机制：DOM 层翻译时把原文记进 `originalText` / `originalAttrs`，`revertDom()` 一次性写回；`setLanguage()` 的顺序是「停观察器 → 还原 → 换词典 → 重扫 → 恢复观察器」，顺序颠倒会互相打架（还原会被观察器当成"新渲染的英文"再翻一遍）。
+- 文档正文跟着换：`i18n/docs.ts` 改成就地替换数组内容，`DocsList` / `DocsView` 用新的 `useLanguage()` hook 重新渲染；课程正文与证书来自 Rust / canvas，仍保持中文（已写进"已知限制"）。
+- 记忆：`localStorage` 的 `zorvik.locale`；`VITE_ZORVIK_LOCALE` 钉死语言时按钮自动隐藏（e2e 用）。
+- 验证：`tsc`、`vite build`、`vitest`（452 通过，新增 4 条覆盖还原/回切/记忆）、实机（devbridge + vite）：中→英整屏回到 `Training Bootcamp / Workbench / Settings…`，文档列表变 `Start here / HTTP requests…`，刷新后保持；再点回中文复原。
 
 待办，按性价比排序：
 
