@@ -1,0 +1,92 @@
+# 中文版的 Windows 发布流水线（fork 专用，上游 CI 不动）。
+#
+# 与上游 ci.yml 的区别：只出 Windows 安装包 + 绿色版，不跑 macOS/Linux 矩阵，也不碰
+# 上游的 `release` environment 与更新签名（那把私钥只在 LibreGuild 的仓库里）。
+# 也就是说：这里产出的包不会自动更新，应用内更新指向的仍是上游仓库。
+#
+# 用法：打一个 `zh-v*` 标签即可（例如 `zh-v0.3.1`），或 Actions 页面手动触发（只上传产物，不发 Release）。
+name: Release (zh-CN)
+
+on:
+  push:
+    tags: ["zh-v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: release-zh-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows 安装包
+    runs-on: windows-latest
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> target"
+
+      - name: 安装前端依赖
+        working-directory: app
+        run: npm ci
+
+      - name: 打包（安装包 + 内置 zorvik 命令行）
+        working-directory: app
+        run: npm run package -- --bundles nsis
+
+      - name: 版本号
+        id: version
+        shell: pwsh
+        run: |
+          $v = (Get-Content app/src-tauri/tauri.conf.json -Raw | ConvertFrom-Json).version
+          "value=$v" >> $env:GITHUB_OUTPUT
+
+      - name: 绿色版压缩包
+        shell: pwsh
+        run: |
+          $dir = "dist-portable/Zorvik-${{ steps.version.outputs.value }}-x64-portable"
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+          Copy-Item target/release/zorvik-desktop.exe $dir
+          Copy-Item target/release/zorvik.exe $dir
+          Compress-Archive -Path "$dir/*" -DestinationPath "dist-portable/Zorvik-${{ steps.version.outputs.value }}-x64-portable.zip" -Force
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v7
+        with:
+          name: zorvik-zh-windows
+          path: |
+            target/release/bundle/nsis/*.exe
+            dist-portable/*.zip
+          if-no-files-found: error
+
+      - name: 发布 Release
+        if: startsWith(github.ref, 'refs/tags/zh-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: 中文版 ${{ steps.version.outputs.value }}
+          draft: true
+          generate_release_notes: true
+          body: |
+            Zorvik 中文版 ${{ steps.version.outputs.value }}（Windows x64）。
+
+            - `Zorvik_${{ steps.version.outputs.value }}_x64-setup.exe`：安装包（含 `zorvik` 命令行）
+            - `Zorvik-${{ steps.version.outputs.value }}-x64-portable.zip`：免安装绿色版
+
+            本包不含更新签名，应用内自动更新仍指向上游仓库。
+          files: |
+            target/release/bundle/nsis/*.exe
+            dist-portable/*.zip
