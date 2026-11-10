@@ -7528,7 +7528,7 @@ checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
 
 [[package]]
 name = "zorvik-academy"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "indexmap 2.14.2",
  "regex",
@@ -7541,7 +7541,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-api"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "base64 0.23.1",
  "memchr",
@@ -7573,7 +7573,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-cli"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "clap",
  "serde",
@@ -7592,7 +7592,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-desktop"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2-app-kit",
  "semver",
@@ -7617,7 +7617,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-devbridge"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "axum",
  "clap",
@@ -7633,7 +7633,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-engine"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "base64 0.23.1",
  "brotli-decompressor",
@@ -7685,7 +7685,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-formats"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "base64 0.23.1",
  "indexmap 2.14.2",
@@ -7705,7 +7705,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-load"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bytes",
  "hdrhistogram",
@@ -7726,7 +7726,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-mcp"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "dirs",
  "serde",
@@ -7745,7 +7745,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-script"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "rand 0.10.3",
  "rquickjs",
@@ -7756,7 +7756,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-servers"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "base64 0.23.1",
  "bytes",
@@ -7786,7 +7786,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-testkit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "axum",
  "base64 0.23.1",
@@ -7822,7 +7822,7 @@ dependencies = [
 
 [[package]]
 name = "zorvik-workspace"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "base64 0.23.1",
  "bytes",

@@ -460,6 +460,12 @@ $env:VITE_ZORVIK_LOCALE="en"; npm run e2e
 - 记忆：`localStorage` 的 `zorvik.locale`；`VITE_ZORVIK_LOCALE` 钉死语言时按钮自动隐藏（e2e 用）。
 - 验证：`tsc`、`vite build`、`vitest`（452 通过，新增 4 条覆盖还原/回切/记忆）、实机（devbridge + vite）：中→英整屏回到 `Training Bootcamp / Workbench / Settings…`，文档列表变 `Start here / HTTP requests…`，刷新后保持；再点回中文复原。
 
+**2026-11-10　P14 出 0.3.2 安装包**
+
+- `npm run set-version -- 0.3.2`（Cargo.toml / Cargo.lock / package.json / package-lock.json / tauri.conf.json 一起改），CHANGELOG 补上 0.3.2 一节，写明这是中文版自己的版本号（上游仍是 0.3.1）。
+- 本地打包：`cd app; npm run package -- --bundles nsis` → `target/release/bundle/nsis/Zorvik_0.3.2_x64-setup.exe`；绿色版压在 `dist-portable/Zorvik-0.3.2-x64-portable.zip`（`dist-portable/` 已在 `.gitignore`）。
+- 发布：`git tag -a zh-v0.3.2 -m "…" && git push origin zh-v0.3.2` 会触发 `.github/workflows/release-zh.yml` 自动出包并发布 Release（本地这一份与 CI 的产物等价，打不打标签按需要）。
+
 待办，按性价比排序：
 
 | 阶段 | 范围 | 量级 | 备注 |
