@@ -78,7 +78,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: 中文版 ${{ steps.version.outputs.value }}
-          draft: true
+          draft: false
           generate_release_notes: true
           body: |
             Zorvik 中文版 ${{ steps.version.outputs.value }}（Windows x64）。
