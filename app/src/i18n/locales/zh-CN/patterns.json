@@ -1,0 +1,1182 @@
+[
+  {
+    "pattern": "^Routes · (\\d+)$",
+    "replacement": "路由 · {0}"
+  },
+  {
+    "pattern": "^New (.+)$",
+    "replacement": "新建 {0}"
+  },
+  {
+    "pattern": "^Up to (.+) per test: lower the stage targets\\.$",
+    "replacement": "每个测试最多 {0}：请调低阶段目标。"
+  },
+  {
+    "pattern": "^([\\d,.]+) users$",
+    "replacement": "{0} 个用户"
+  },
+  {
+    "pattern": "^Stopped sending the message every (.+)$",
+    "replacement": "已停止每隔 {0} 发送消息"
+  },
+  {
+    "pattern": "^(\\d+) servers are running$",
+    "replacement": "{0} 台服务器正在运行"
+  },
+  {
+    "pattern": "^(\\d+) tabs have unsaved changes$",
+    "replacement": "{0} 个标签页存在未保存的改动"
+  },
+  {
+    "pattern": "^(\\d+) errors?$",
+    "replacement": "{0} 个错误"
+  },
+  {
+    "pattern": "^Events · (\\d+)$",
+    "replacement": "事件 · {0}"
+  },
+  {
+    "pattern": "^(\\d+) connections?$",
+    "replacement": "{0} 个连接"
+  },
+  {
+    "pattern": "^(\\d+) messages?$",
+    "replacement": "{0} 条消息"
+  },
+  {
+    "pattern": "^(\\d+) runs?$",
+    "replacement": "{0} 次运行"
+  },
+  {
+    "pattern": "^Run (.+)$",
+    "replacement": "运行：{0}"
+  },
+  {
+    "pattern": "^(.+) · (\\d+) requests? · (.+)$",
+    "replacement": "{0} · {1} 个请求 · {2}"
+  },
+  {
+    "pattern": "^On any message \\(sent or received\\)$",
+    "replacement": "收到或发出任意消息时"
+  },
+  {
+    "pattern": "^On a message containing \"(.+)\" \\(sent or received\\)$",
+    "replacement": "收到或发出含“{0}”的消息时"
+  },
+  {
+    "pattern": "^On the message \"(.+)\" \\(sent or received\\)$",
+    "replacement": "收到或发出消息“{0}”时"
+  },
+  {
+    "pattern": "^On a message matching /(.+)/ \\(sent or received\\)$",
+    "replacement": "收到或发出匹配 /{0}/ 的消息时"
+  },
+  {
+    "pattern": "^On the event \"(.+)\" \\(sent or received\\)$",
+    "replacement": "收到或发出事件“{0}”时"
+  },
+  {
+    "pattern": "^Server · :(\\d+)$",
+    "replacement": "服务器 · :{0}"
+  },
+  {
+    "pattern": "^… (.+) more$",
+    "replacement": "… 还有 {0} "
+  },
+  {
+    "pattern": "^(.+) characters$",
+    "replacement": "{0} 个字符"
+  },
+  {
+    "pattern": "^(\\d+) redirects?$",
+    "replacement": "{0} 次重定向"
+  },
+  {
+    "pattern": "^On any message$",
+    "replacement": "收到任意消息时"
+  },
+  {
+    "pattern": "^On any sent message$",
+    "replacement": "发出任意消息时"
+  },
+  {
+    "pattern": "^On a message containing \"(.+)\"$",
+    "replacement": "收到含“{0}”的消息时"
+  },
+  {
+    "pattern": "^On a sent message containing \"(.+)\"$",
+    "replacement": "发出含“{0}”的消息时"
+  },
+  {
+    "pattern": "^On the message \"(.+)\"$",
+    "replacement": "收到消息“{0}”时"
+  },
+  {
+    "pattern": "^On the sent message \"(.+)\"$",
+    "replacement": "发出消息“{0}”时"
+  },
+  {
+    "pattern": "^On a message matching /(.+)/$",
+    "replacement": "收到匹配 /{0}/ 的消息时"
+  },
+  {
+    "pattern": "^On a sent message matching /(.+)/$",
+    "replacement": "发出匹配 /{0}/ 的消息时"
+  },
+  {
+    "pattern": "^On a JSON (.+) where (.+)$",
+    "replacement": "收到满足 {1} 的 JSON {0} 时"
+  },
+  {
+    "pattern": "^On the event \"(.+)\"$",
+    "replacement": "收到事件“{0}”时"
+  },
+  {
+    "pattern": "^On the sent event \"(.+)\"$",
+    "replacement": "发出事件“{0}”时"
+  },
+  {
+    "pattern": "^On the event \"(.+)\" with arguments containing \"(.+)\"$",
+    "replacement": "收到事件“{0}”、且参数包含“{1}”时"
+  },
+  {
+    "pattern": "^On the event \"(.+)\" with arguments exactly (.+)$",
+    "replacement": "收到事件“{0}”、且参数正好是 {1} 时"
+  },
+  {
+    "pattern": "^On the event \"(.+)\" with arguments matching /(.+)/$",
+    "replacement": "收到事件“{0}”、且参数匹配 /{1}/ 时"
+  },
+  {
+    "pattern": "^On the event \"(.+)\" with arguments where (.+)$",
+    "replacement": "收到事件“{0}”、且参数满足 {1} 时"
+  },
+  {
+    "pattern": "^On the sent event \"(.+)\" with arguments containing \"(.+)\"$",
+    "replacement": "发出事件“{0}”、且参数包含“{1}”时"
+  },
+  {
+    "pattern": "^On the sent event \"(.+)\" with arguments exactly (.+)$",
+    "replacement": "发出事件“{0}”、且参数正好是 {1} 时"
+  },
+  {
+    "pattern": "^On the sent event \"(.+)\" with arguments matching /(.+)/$",
+    "replacement": "发出事件“{0}”、且参数匹配 /{1}/ 时"
+  },
+  {
+    "pattern": "^On the sent event \"(.+)\" with arguments where (.+)$",
+    "replacement": "发出事件“{0}”、且参数满足 {1} 时"
+  },
+  {
+    "pattern": "^Show only this event · (.+)-click: hide it$",
+    "replacement": "只看这个事件 · {0}-点击：隐藏"
+  },
+  {
+    "pattern": "^Show only this event · (.+)-click: show it$",
+    "replacement": "只看这个事件 · {0}-点击：显示"
+  },
+  {
+    "pattern": "^Show only this topic · (.+)-click: hide it$",
+    "replacement": "只看这个主题 · {0}-点击：隐藏"
+  },
+  {
+    "pattern": "^Show only this topic · (.+)-click: show it$",
+    "replacement": "只看这个主题 · {0}-点击：显示"
+  },
+  {
+    "pattern": "^Show every event · (.+)-click: hide it$",
+    "replacement": "显示所有事件 · {0}-点击：隐藏"
+  },
+  {
+    "pattern": "^Show every event · (.+)-click: show it$",
+    "replacement": "显示所有事件 · {0}-点击：显示"
+  },
+  {
+    "pattern": "^Show every topic · (.+)-click: hide it$",
+    "replacement": "显示所有主题 · {0}-点击：隐藏"
+  },
+  {
+    "pattern": "^Show every topic · (.+)-click: show it$",
+    "replacement": "显示所有主题 · {0}-点击：显示"
+  },
+  {
+    "pattern": "^(.+) every (\\d+) ms \\((.+)\\): (.+), (.+) kHz, (.+)\\.$",
+    "replacement": "每 {1} 毫秒发送 {0}（{2}）：{3}，{4} kHz，{5}。"
+  },
+  {
+    "pattern": "^(.+) of capture (\\d+) of (.+)$",
+    "replacement": "{0}：{2} 的第 {1} 个捕获"
+  },
+  {
+    "pattern": "^(\\S+) (\\S+) → (.+)\\. Save the server to keep it\\.$",
+    "replacement": "{0} {1} → {2}。保存服务器即可保留。"
+  },
+  {
+    "pattern": "^Up to date \\(checked (.+)\\)\\.$",
+    "replacement": "已是最新（{0} 检查过）。"
+  },
+  {
+    "pattern": "^Version (.+) is out\\. This copy \\((.+)\\) doesn't update itself\\.$",
+    "replacement": "版本 {0} 已发布。这份副本（{1}）不会自动更新。"
+  },
+  {
+    "pattern": "^Version (.+) is out\\. It couldn't be installed automatically: download it from GitHub\\.$",
+    "replacement": "版本 {0} 已发布。无法自动安装：请从 GitHub 下载。"
+  },
+  {
+    "pattern": "^Version (.+) is downloaded\\. It installs when you quit Zorvik, or restart now\\.$",
+    "replacement": "版本 {0} 已下载。退出 Zorvik 时会安装，也可以现在重启安装。"
+  },
+  {
+    "pattern": "^Version (.+) is out\\.$",
+    "replacement": "版本 {0} 已发布。"
+  },
+  {
+    "pattern": "^Zorvik (.+) is ready$",
+    "replacement": "Zorvik {0} 已就绪"
+  },
+  {
+    "pattern": "^Zorvik (.+) is out$",
+    "replacement": "Zorvik {0} 已发布"
+  },
+  {
+    "pattern": "^This copy \\((.+)\\) doesn't update itself: download the new version from GitHub\\.$",
+    "replacement": "这份副本（{0}）不会自动更新：请从 GitHub 下载新版本。"
+  },
+  {
+    "pattern": "^Start \\((.+)\\+Enter\\)$",
+    "replacement": "开始（{0}+Enter）"
+  },
+  {
+    "pattern": "^Stop \\((.+)\\+Enter\\)$",
+    "replacement": "停止（{0}+Enter）"
+  },
+  {
+    "pattern": "^Run \\((.+)\\+Enter\\)$",
+    "replacement": "运行（{0}+Enter）"
+  },
+  {
+    "pattern": "^Send this message \\((.+)\\+Enter\\)$",
+    "replacement": "发送这条消息（{0}+Enter）"
+  },
+  {
+    "pattern": "^Denied in (\\d+):(\\d+)$",
+    "replacement": "{0}:{1} 后自动拒绝"
+  },
+  {
+    "pattern": "^· (\\d+) more waiting$",
+    "replacement": "· 还有 {0} 个待处理"
+  },
+  {
+    "pattern": "^Zorvik can't import (.+)$",
+    "replacement": "Zorvik 无法导入{0}"
+  },
+  {
+    "pattern": "^Couldn't import (.+)$",
+    "replacement": "导入{0}失败"
+  },
+  {
+    "pattern": "^Downloading from (.+)…$",
+    "replacement": "正从 {0} 下载…"
+  },
+  {
+    "pattern": "^Importing (.+)…$",
+    "replacement": "正在导入{0}…"
+  },
+  {
+    "pattern": "^“(.+)” is running\\. One load test runs at a time\\.$",
+    "replacement": "“{0}”正在运行。同一时间只能跑一个负载测试。"
+  },
+  {
+    "pattern": "^“(.+)” is running\\. One run at a time\\.$",
+    "replacement": "“{0}”正在运行。同一时间只能跑一次。"
+  },
+  {
+    "pattern": "^Run \\(“(.+)” is running\\)$",
+    "replacement": "运行（“{0}”正在运行）"
+  },
+  {
+    "pattern": "^“(.+)” is running$",
+    "replacement": "“{0}”正在运行"
+  },
+  {
+    "pattern": "^(\\d+) of (\\d+) included$",
+    "replacement": "已纳入 {0} / {1}"
+  },
+  {
+    "pattern": "^Up to (.+)$",
+    "replacement": "最多 {0}"
+  },
+  {
+    "pattern": "^Stops the run after (.+) failing$",
+    "replacement": "持续失败 {0} 后停止运行"
+  },
+  {
+    "pattern": "^(.+)–(.+) ms \\(random\\)$",
+    "replacement": "{0}–{1} 毫秒（随机）"
+  },
+  {
+    "pattern": "^(\\d+) of (\\d+) thresholds failed\\.$",
+    "replacement": "{0} / {1} 个阈值未达标。"
+  },
+  {
+    "pattern": "^All (\\d+) thresholds passed\\.$",
+    "replacement": "{0} 个阈值全部通过。"
+  },
+  {
+    "pattern": "^Stopped early: (.+) failed for longer than it allows\\.$",
+    "replacement": "提前停止：{0} 持续不达标超过了允许时长。"
+  },
+  {
+    "pattern": "^The first (.+) \\(warm-up\\) are charted but left out of the numbers and thresholds\\.$",
+    "replacement": "前 {0}（预热）会画进图表，但不计入数字和阈值。"
+  },
+  {
+    "pattern": "^Warming up: requests in the first (.+) are charted but not counted\\.$",
+    "replacement": "预热中：前 {0} 的请求会画进图表，但不计入统计。"
+  },
+  {
+    "pattern": "^The first (.+) \\(warm-up\\) are charted but not counted\\.$",
+    "replacement": "前 {0}（预热）会画进图表，但不计入统计。"
+  },
+  {
+    "pattern": "^(.+) failed \\+ (.+) dropped of (.+)$",
+    "replacement": "失败 {0} + 丢弃 {1}，共 {2} 个请求"
+  },
+  {
+    "pattern": "^Stopping: (.+) failed for longer than it allows\\.$",
+    "replacement": "正在停止：{0} 持续不达标超过了允许时长。"
+  },
+  {
+    "pattern": "^Stage (\\d+) duration in seconds$",
+    "replacement": "第 {0} 阶段时长（秒）"
+  },
+  {
+    "pattern": "^Stage (\\d+) target$",
+    "replacement": "第 {0} 阶段目标"
+  },
+  {
+    "pattern": "^Move stage (\\d+) up$",
+    "replacement": "上移第 {0} 阶段"
+  },
+  {
+    "pattern": "^Move stage (\\d+) down$",
+    "replacement": "下移第 {0} 阶段"
+  },
+  {
+    "pattern": "^Remove stage (\\d+)$",
+    "replacement": "删除第 {0} 阶段"
+  },
+  {
+    "pattern": "^Load shape: up to (.+) over (.+)$",
+    "replacement": "负载曲线：最高 {0}，历时 {1}"
+  },
+  {
+    "pattern": "^Captures of (.+)$",
+    "replacement": "{0} 的捕获"
+  },
+  {
+    "pattern": "^Weight of (.+)$",
+    "replacement": "{0} 的权重"
+  },
+  {
+    "pattern": "^Variable (\\d+) of (.+)$",
+    "replacement": "{1} 的第 {0} 个变量"
+  },
+  {
+    "pattern": "^Where capture (\\d+) of (.+) comes from$",
+    "replacement": "{1} 的第 {0} 个捕获取自哪里"
+  },
+  {
+    "pattern": "^Remove capture (\\d+) of (.+)$",
+    "replacement": "删除{1}的第 {0} 个捕获"
+  },
+  {
+    "pattern": "^New connection for (.+) of requests$",
+    "replacement": "{0} 的请求新建了连接"
+  },
+  {
+    "pattern": "^Compared with the run of (.+)$",
+    "replacement": "与 {0} 的那次运行对比"
+  },
+  {
+    "pattern": "^That run can't be opened: (.+)$",
+    "replacement": "打不开那次运行：{0}"
+  },
+  {
+    "pattern": "^Show (\\d+) more iterations \\((\\d+) not shown\\)$",
+    "replacement": "再显示 {0} 轮（还有 {1} 轮未显示）"
+  },
+  {
+    "pattern": "^(\\d+) more results aren't listed: a run keeps the first (\\d+), then failed ones\\. The counts above include them\\.$",
+    "replacement": "还有 {0} 条结果未列出：每次运行只保留前 {1} 条和失败的条目，上面的统计已包含它们。"
+  },
+  {
+    "pattern": "^Empty: one per data row \\((\\d+)\\)$",
+    "replacement": "留空：每行数据跑一次（共 {0} 次）"
+  },
+  {
+    "pattern": "^Move (.+) \\(Alt\\+Up / Alt\\+Down\\)$",
+    "replacement": "移动 {0}（Alt+↑ / Alt+↓）"
+  },
+  {
+    "pattern": "^Imported (.+), but couldn't reload the workspace$",
+    "replacement": "已导入{0}，但无法重新加载工作区"
+  },
+  {
+    "pattern": "^· (\\d+) workspace variables?$",
+    "replacement": "· {0} 个工作区变量"
+  },
+  {
+    "pattern": "^Update “(.+)” from its API spec$",
+    "replacement": "按 API 规范更新“{0}”"
+  },
+  {
+    "pattern": "^(\\d+) added · (\\d+) changed · (\\d+) removed · (\\d+) unchanged$",
+    "replacement": "新增 {0} · 变更 {1} · 删除 {2} · 未变 {3}"
+  },
+  {
+    "pattern": "^keeps your (.+)$",
+    "replacement": "保留你的 {0}"
+  },
+  {
+    "pattern": "^Load test · (.+) · (\\d+) requests?$",
+    "replacement": "负载测试 · {0} · {1} 个请求"
+  },
+  {
+    "pattern": "^(.+) \\(not saved\\)$",
+    "replacement": "{0}（未保存）"
+  },
+  {
+    "pattern": "^System resolver (.+) · (.+)$",
+    "replacement": "系统解析器 {0} · {1}"
+  },
+  {
+    "pattern": "^Response code (\\d+)$",
+    "replacement": "响应码 {0}"
+  },
+  {
+    "pattern": "^The name exists but has no (.+) records\\.$",
+    "replacement": "这个名字存在，但没有 {0} 记录。"
+  },
+  {
+    "pattern": "^The server answered (.+)\\.$",
+    "replacement": "服务器返回 {0}。"
+  },
+  {
+    "pattern": "^Schema loaded · (.+) types$",
+    "replacement": "schema 已加载 · {0} 个类型"
+  },
+  {
+    "pattern": "^The message is replaced with an example (.+)\\.$",
+    "replacement": "消息会被替换成一条示例 {0}。"
+  },
+  {
+    "pattern": "^Send to call (.+)$",
+    "replacement": "发送以调用 {0}"
+  },
+  {
+    "pattern": "^Not connected: (.+)$",
+    "replacement": "未连接：{0}"
+  },
+  {
+    "pattern": "^(\\d+) earlier not kept$",
+    "replacement": "更早的 {0} 条未保留"
+  },
+  {
+    "pattern": "^answer to (.+)$",
+    "replacement": "对 {0} 的回答"
+  },
+  {
+    "pattern": "^with arguments containing \"(.+)\"$",
+    "replacement": "参数里包含“{0}”"
+  },
+  {
+    "pattern": "^with arguments exactly (.+)$",
+    "replacement": "参数正好是 {0}"
+  },
+  {
+    "pattern": "^with arguments matching /(.+)/$",
+    "replacement": "参数匹配 /{0}/"
+  },
+  {
+    "pattern": "^with arguments where (.+)$",
+    "replacement": "参数满足 {0}"
+  },
+  {
+    "pattern": "^a JSON (.+) where (.+)$",
+    "replacement": "一个满足 {1} 的 JSON {0}"
+  },
+  {
+    "pattern": "^Subscribed \\(QoS (\\d+)\\)$",
+    "replacement": "已订阅（QoS {0}）"
+  },
+  {
+    "pattern": "^Value of a (.+) variable$",
+    "replacement": "{0}变量的值"
+  },
+  {
+    "pattern": "^Set a (.+) variable \\(kept on this computer, never in workspace files\\)$",
+    "replacement": "设置一个{0}变量（只留在本机，从不写入工作区文件）"
+  },
+  {
+    "pattern": "^Request sent · (.+) · (.+) body$",
+    "replacement": "请求已发送 · {0} · 请求体 {1}"
+  },
+  {
+    "pattern": "^Wire size (.+)$",
+    "replacement": "线上大小 {0}"
+  },
+  {
+    "pattern": "^Not a valid XPath expression: (.+)$",
+    "replacement": "不是合法的 XPath 表达式：{0}"
+  },
+  {
+    "pattern": "^Could not start “(.+)”$",
+    "replacement": "无法启动“{0}”"
+  },
+  {
+    "pattern": "^Could not start \"(.+)\"$",
+    "replacement": "无法启动“{0}”"
+  },
+  {
+    "pattern": "^Copy (.+) command$",
+    "replacement": "复制{0}命令"
+  },
+  {
+    "pattern": "^Waits (\\d+) ms$",
+    "replacement": "等待 {0} 毫秒"
+  },
+  {
+    "pattern": "^Offer this (.+)$",
+    "replacement": "提供这个{0}"
+  },
+  {
+    "pattern": "^(\\d+) parts? of the document could not be used: (.+)$",
+    "replacement": "文档里有 {0} 处无法使用：{1}"
+  },
+  {
+    "pattern": "^Created \"(.+)\" with (\\d+) routes?$",
+    "replacement": "已创建“{0}”，含 {1} 条路由"
+  },
+  {
+    "pattern": "^Route added to \"(.+)\"$",
+    "replacement": "已向“{0}”添加路由"
+  },
+  {
+    "pattern": "^a (.+) byte body$",
+    "replacement": "{0} 字节的请求体"
+  },
+  {
+    "pattern": "^Call (\\d+) answer$",
+    "replacement": "第 {0} 次调用的应答"
+  },
+  {
+    "pattern": "^Call (\\d+) status$",
+    "replacement": "第 {0} 次调用的状态码"
+  },
+  {
+    "pattern": "^Call (\\d+) delay in milliseconds$",
+    "replacement": "第 {0} 次调用的延迟（毫秒）"
+  },
+  {
+    "pattern": "^Remove call (\\d+)$",
+    "replacement": "删除第 {0} 次调用"
+  },
+  {
+    "pattern": "^Reply to #(\\d+)$",
+    "replacement": "回复 #{0}"
+  },
+  {
+    "pattern": "^Send to #(\\d+)$",
+    "replacement": "发送到 #{0}"
+  },
+  {
+    "pattern": "^(\\d+) routes? added$",
+    "replacement": "已添加 {0} 条路由"
+  },
+  {
+    "pattern": "^Matching requests are answered by the mock now\\. Save the server to keep them\\.(.+)$",
+    "replacement": "匹配的请求现在由 Mock 应答。保存服务器即可保留。{0}"
+  },
+  {
+    "pattern": "^Every proxied answer already has a route\\.(.+)$",
+    "replacement": "所有经代理的应答都已经有路由了。{0}"
+  },
+  {
+    "pattern": "^(\\d+) answers? (?:was|were) cut, binary or compressed and can't be replayed\\.$",
+    "replacement": "{0} 个应答被截断，或是二进制/压缩内容，无法重放。"
+  },
+  {
+    "pattern": "^(.+) \\(no longer in the API spec\\)$",
+    "replacement": "{0}（已不在 API 规范里）"
+  },
+  {
+    "pattern": "^“(.+)” and everything in it will be moved to the trash\\.$",
+    "replacement": "“{0}”及其中的所有内容都会被移到回收站。"
+  },
+  {
+    "pattern": "^Real-time audio, (\\d+) ms per message$",
+    "replacement": "实时音频，每条消息 {0} 毫秒"
+  },
+  {
+    "pattern": "^· (.+) in (.+) messages$",
+    "replacement": "· 共 {1} 条消息，{0}"
+  },
+  {
+    "pattern": "^wants ack #(.+)$",
+    "replacement": "等待 ack #{0}"
+  },
+  {
+    "pattern": "^(.+) sent · (.+) received$",
+    "replacement": "已发送 {0} · 已接收 {1}"
+  },
+  {
+    "pattern": "^Not UTF-8 text: showing the (.+) bytes as hex$",
+    "replacement": "不是 UTF-8 文本：以十六进制显示这 {0} 字节"
+  },
+  {
+    "pattern": "^The (.+) bytes are not UTF-8 text$",
+    "replacement": "这 {0} 字节不是 UTF-8 文本"
+  },
+  {
+    "pattern": "^Advertised in Alt-Svc and answered over QUIC with (.+)$",
+    "replacement": "Alt-Svc 里声明了 HTTP/3，并通过 QUIC 应答（{0}）"
+  },
+  {
+    "pattern": "^HTTP/3 was (.+) faster in total \\(one sample each, fresh connections\\)\\.$",
+    "replacement": "全程 HTTP/3 快了 {0}（各采样一次，全新连接）"
+  },
+  {
+    "pattern": "^HTTP/3 was (.+) slower in total \\(one sample each, fresh connections\\)\\.$",
+    "replacement": "全程 HTTP/3 慢了 {0}（各采样一次，全新连接）"
+  },
+  {
+    "pattern": "^Clear the (.+) document$",
+    "replacement": "清空{0}文档"
+  },
+  {
+    "pattern": "^Paste the (.+) JSON$",
+    "replacement": "粘贴{0} JSON"
+  },
+  {
+    "pattern": "^Matches · first (.+) shown$",
+    "replacement": "匹配 · 只显示前 {0} 条"
+  },
+  {
+    "pattern": "^Certificate chain · (\\d+) sent by the server$",
+    "replacement": "证书链 · 服务器发来 {0} 张"
+  },
+  {
+    "pattern": "^Valid from (.+)$",
+    "replacement": "生效于 {0}"
+  },
+  {
+    "pattern": "^Expires in (\\d+) days?$",
+    "replacement": "{0} 天后过期"
+  },
+  {
+    "pattern": "^(\\d+) of (\\d+) lessons done\\. Pick up where you left off\\.$",
+    "replacement": "已完成 {0} / {1} 课，从上次停下的地方继续。"
+  },
+  {
+    "pattern": "^(\\d+) of (\\d+) lessons done$",
+    "replacement": "已完成 {0} / {1} 课"
+  },
+  {
+    "pattern": "^(\\d+) agents$",
+    "replacement": "{0} 个 Agent"
+  },
+  {
+    "pattern": "^(\\d+) running$",
+    "replacement": "{0} 个运行中"
+  },
+  {
+    "pattern": "^(.+) timed out after (.+)$",
+    "replacement": "{0} 在 {1} 后超时"
+  },
+  {
+    "pattern": "^Open “(.+)”$",
+    "replacement": "打开“{0}”"
+  },
+  {
+    "pattern": "^In workspace “(.+)”$",
+    "replacement": "位于工作区“{0}”"
+  },
+  {
+    "pattern": "^“(.+)” runs in another workspace$",
+    "replacement": "“{0}”在另一个工作区中运行"
+  },
+  {
+    "pattern": "^“(.+)” will be moved to the trash\\.$",
+    "replacement": "“{0}”将被移到回收站。"
+  },
+  {
+    "pattern": "^Stop (.+)$",
+    "replacement": "停止 {0}"
+  },
+  {
+    "pattern": "^Disconnect (.+)$",
+    "replacement": "断开 {0}"
+  },
+  {
+    "pattern": "^Theme: match system$",
+    "replacement": "主题：跟随系统"
+  },
+  {
+    "pattern": "^Theme: dark$",
+    "replacement": "主题：深色"
+  },
+  {
+    "pattern": "^Theme: light$",
+    "replacement": "主题：浅色"
+  },
+  {
+    "pattern": "^Theme: (.+)$",
+    "replacement": "主题：{0}"
+  },
+  {
+    "pattern": "^Settings \\(Zorvik (.+) is available\\)$",
+    "replacement": "设置（Zorvik {0} 可用）"
+  },
+  {
+    "pattern": "^All, (\\d+) APIs?$",
+    "replacement": "全部，{0} 个 API"
+  },
+  {
+    "pattern": "^AI, (\\d+) APIs?$",
+    "replacement": "AI，{0} 个 API"
+  },
+  {
+    "pattern": "^Cloud, (\\d+) APIs?$",
+    "replacement": "云服务，{0} 个 API"
+  },
+  {
+    "pattern": "^Commerce, (\\d+) APIs?$",
+    "replacement": "电商，{0} 个 API"
+  },
+  {
+    "pattern": "^CRM & marketing, (\\d+) APIs?$",
+    "replacement": "CRM 与营销，{0} 个 API"
+  },
+  {
+    "pattern": "^Databases & search, (\\d+) APIs?$",
+    "replacement": "数据库与搜索，{0} 个 API"
+  },
+  {
+    "pattern": "^Developer tools, (\\d+) APIs?$",
+    "replacement": "开发者工具，{0} 个 API"
+  },
+  {
+    "pattern": "^Identity, (\\d+) APIs?$",
+    "replacement": "身份认证，{0} 个 API"
+  },
+  {
+    "pattern": "^Maps & media, (\\d+) APIs?$",
+    "replacement": "地图与媒体，{0} 个 API"
+  },
+  {
+    "pattern": "^Messaging & email, (\\d+) APIs?$",
+    "replacement": "消息与邮件，{0} 个 API"
+  },
+  {
+    "pattern": "^Monitoring, (\\d+) APIs?$",
+    "replacement": "监控，{0} 个 API"
+  },
+  {
+    "pattern": "^Payments, (\\d+) APIs?$",
+    "replacement": "支付，{0} 个 API"
+  },
+  {
+    "pattern": "^Productivity, (\\d+) APIs?$",
+    "replacement": "效率工具，{0} 个 API"
+  },
+  {
+    "pattern": "^Downloads from (.+)$",
+    "replacement": "从 {0} 下载"
+  },
+  {
+    "pattern": "^Uses the (.+) API description$",
+    "replacement": "使用 {0} 的 API 描述"
+  },
+  {
+    "pattern": "^Send \\((.+)\\)$",
+    "replacement": "发送（{0}）"
+  },
+  {
+    "pattern": "^Save \\((.+)\\)$",
+    "replacement": "保存（{0}）"
+  },
+  {
+    "pattern": "^Makes everything bigger or smaller\\. (.+)\\+ zooms in, (.+)− out, (.+)0 resets\\.$",
+    "replacement": "让界面整体变大或变小。{0}+ 放大，{1}− 缩小，{2}0 还原。"
+  },
+  {
+    "pattern": "^UNIT (\\d+)$",
+    "replacement": "单元 {0}"
+  },
+  {
+    "pattern": "^(\\d+) new lessons$",
+    "replacement": "{0} 门新课"
+  },
+  {
+    "pattern": "^1 new lesson$",
+    "replacement": "1 门新课"
+  },
+  {
+    "pattern": "^(\\d+) new badges!$",
+    "replacement": "{0} 枚新徽章！"
+  },
+  {
+    "pattern": "^Earned (.+)$",
+    "replacement": "获得于 {0}"
+  },
+  {
+    "pattern": "^Finish “(.+)”$",
+    "replacement": "完成“{0}”"
+  },
+  {
+    "pattern": "^Test out: (.+)$",
+    "replacement": "免修测试：{0}"
+  },
+  {
+    "pattern": "^Test out of “(.+)”$",
+    "replacement": "“{0}”免修测试"
+  },
+  {
+    "pattern": "^Get 80% right to earn the (.+) badge and the unit's XP\\. The lessons stay open to read and practise\\.$",
+    "replacement": "答对 80% 就能拿到{0}徽章和这个单元的经验值。课程仍可随时阅读、练习。"
+  },
+  {
+    "pattern": "^Passed: (\\d+) of (\\d+)\\. The badge is yours!$",
+    "replacement": "通过：{0} / {1}，徽章归你了！"
+  },
+  {
+    "pattern": "^(\\d+) of (\\d+): you need (\\d+) to pass\\. Read the unit's lessons, then try again\\.$",
+    "replacement": "{0} / {1}：需要答对 {2} 题才能通过。先把这个单元的课程读一遍，再试一次。"
+  },
+  {
+    "pattern": "^Level (\\d+)!$",
+    "replacement": "升到 {0} 级！"
+  },
+  {
+    "pattern": "^Level (\\d+)$",
+    "replacement": "{0} 级"
+  },
+  {
+    "pattern": "^· you are now a (.+)$",
+    "replacement": "· 你现在是{0}"
+  },
+  {
+    "pattern": "^(.+) XP in total$",
+    "replacement": "累计 {0} XP"
+  },
+  {
+    "pattern": "^(.+): complete!$",
+    "replacement": "{0}：完成！"
+  },
+  {
+    "pattern": "^Hint \\((\\d+) left\\)$",
+    "replacement": "提示（还剩 {0} 条）"
+  },
+  {
+    "pattern": "^\\+(\\d+) XP$",
+    "replacement": "+{0} XP"
+  },
+  {
+    "pattern": "^peak ([\\d,.]+) users$",
+    "replacement": "峰值 {0} 个用户"
+  },
+  {
+    "pattern": "^peak ([\\d,.]+) req/s$",
+    "replacement": "峰值 {0} 请求/秒"
+  },
+  {
+    "pattern": "^peak (.+)$",
+    "replacement": "峰值 {0}"
+  },
+  {
+    "pattern": "^target (.+)$",
+    "replacement": "目标 {0}"
+  },
+  {
+    "pattern": "^avg (.+)$",
+    "replacement": "平均 {0}"
+  },
+  {
+    "pattern": "^Start (.+)$",
+    "replacement": "启动 {0}"
+  },
+  {
+    "pattern": "^Send (.+)$",
+    "replacement": "发送 {0}"
+  },
+  {
+    "pattern": "^Remove (.+)$",
+    "replacement": "移除 {0}"
+  },
+  {
+    "pattern": "^, including (.+) of another workspace$",
+    "replacement": "，其中包括另一个工作区的 {0}"
+  },
+  {
+    "pattern": "^A server stopped$",
+    "replacement": "服务器已停止"
+  },
+  {
+    "pattern": "^Stopped sending the message every (.+?): (.+)$",
+    "replacement": "已停止每隔 {0} 发送消息：{1}"
+  },
+  {
+    "pattern": "^(.+) stopped$",
+    "replacement": "{0} 已停止"
+  },
+  {
+    "pattern": "^Denied in (\\d+:\\d+)$",
+    "replacement": "{0} 后自动拒绝"
+  },
+  {
+    "pattern": "^Adding (.+)…$",
+    "replacement": "正在添加 {0}…"
+  },
+  {
+    "pattern": "^Up to ([\\d,.]+) users$",
+    "replacement": "最多 {0} 个用户"
+  },
+  {
+    "pattern": "^Up to ([\\d,.]+) req/s$",
+    "replacement": "最多 {0} 请求/秒"
+  },
+  {
+    "pattern": "^ in (.+)$",
+    "replacement": "（{0}）"
+  },
+  {
+    "pattern": "^The course could not be loaded: (.+)$",
+    "replacement": "课程加载失败：{0}"
+  },
+  {
+    "pattern": "^Lab server '(.+)' is invalid: (.+)$",
+    "replacement": "实验服务器“{0}”无效：{1}"
+  },
+  {
+    "pattern": "^Lab file '(.+)' must stay inside the workspace$",
+    "replacement": "实验文件“{0}”必须在工作区里"
+  },
+  {
+    "pattern": "^Unknown method '(.+)'$",
+    "replacement": "未知方法“{0}”"
+  },
+  {
+    "pattern": "^Malformed query → FORMERR(.*)$",
+    "replacement": "查询格式不对 → FORMERR{0}"
+  },
+  {
+    "pattern": "^Upstream (.+) is this DNS server itself: pick another server$",
+    "replacement": "上游 {0} 就是这个 DNS 服务器自己：请换一个"
+  },
+  {
+    "pattern": "^DNS over TCP is off \\(could not listen on TCP port (\\d+): (.+)\\); UDP works$",
+    "replacement": "DNS over TCP 已关闭（无法监听 TCP 端口 {0}：{1}）；UDP 仍可用"
+  },
+  {
+    "pattern": "^Accept failed: (.+)$",
+    "replacement": "接受连接失败：{0}"
+  },
+  {
+    "pattern": "^Could not send the answer to (.+): (.+)$",
+    "replacement": "无法把应答发给 {0}：{1}"
+  },
+  {
+    "pattern": "^NOTIMP \\(this computer's resolver only looks up addresses, not (.+)\\)$",
+    "replacement": "NOTIMP（本机解析器只能查地址，查不了 {0}）"
+  },
+  {
+    "pattern": "^TLS handshake failed: (.+)$",
+    "replacement": "TLS 握手失败：{0}"
+  },
+  {
+    "pattern": "^\\((\\d+) bytes of binary data\\)$",
+    "replacement": "（{0} 字节二进制数据）"
+  },
+  {
+    "pattern": "^Could not read the request body: (.+)$",
+    "replacement": "读取请求体失败：{0}"
+  },
+  {
+    "pattern": "^Could not reach the backend: (.+)$",
+    "replacement": "连不上后端：{0}"
+  },
+  {
+    "pattern": "^The backend's answer is larger than (.+) MB$",
+    "replacement": "后端的应答超过 {0} MB"
+  },
+  {
+    "pattern": "^Port (\\d+) is already in use by another server in Zorvik\\. Stop it or pick another port\\.$",
+    "replacement": "端口 {0} 已被 Zorvik 里的另一个服务器占用。请停掉它或换个端口。"
+  },
+  {
+    "pattern": "^Port (\\d+) is already in use by another server or app\\. Stop it or pick another port\\.$",
+    "replacement": "端口 {0} 已被其他服务器或程序占用。请停掉它或换个端口。"
+  },
+  {
+    "pattern": "^Not allowed to listen on port (\\d+) \\(ports below 1024 may need administrator rights\\)\\.$",
+    "replacement": "不允许监听端口 {0}（1024 以下的端口可能需要管理员权限）。"
+  },
+  {
+    "pattern": "^This computer has no address (.+)\\. Use 127\\.0\\.0\\.1 or 0\\.0\\.0\\.0\\.$",
+    "replacement": "这台电脑没有地址 {0}。请用 127.0.0.1 或 0.0.0.0。"
+  },
+  {
+    "pattern": "^Could not listen on (.+): (.+)$",
+    "replacement": "无法监听 {0}：{1}"
+  },
+  {
+    "pattern": "^Server stopped: (.+)$",
+    "replacement": "服务器已停止：{0}"
+  },
+  {
+    "pattern": "^Method not found: (.+)$",
+    "replacement": "找不到方法：{0}"
+  },
+  {
+    "pattern": "^Resource not found: (.+)$",
+    "replacement": "找不到资源：{0}"
+  },
+  {
+    "pattern": "^The target (.+) is this relay itself: point it at another server$",
+    "replacement": "目标 {0} 就是这个中继自己：请指向别的服务器"
+  },
+  {
+    "pattern": "^Could not connect to the target (.+): (.+)$",
+    "replacement": "连不上目标 {0}：{1}"
+  },
+  {
+    "pattern": "^Not sent: the client is not reading \\((\\d+) sends are still waiting\\)$",
+    "replacement": "未发送：客户端没有在读（还有 {0} 个发送在排队）"
+  },
+  {
+    "pattern": "^Rule (\\d+): close code (\\d+) can't be sent; use 1000 or 3000-4999$",
+    "replacement": "规则 {0}：关闭码 {1} 不能发送；用 1000 或 3000–4999"
+  },
+  {
+    "pattern": "^Scheduled event (\\d+): (.+)$",
+    "replacement": "定时事件 {0}：{1}"
+  },
+  {
+    "pattern": "^The client sent (.+)$",
+    "replacement": "客户端发来 {0}"
+  },
+  {
+    "pattern": "^Write failed: (.+)$",
+    "replacement": "写入失败：{0}"
+  },
+  {
+    "pattern": "^Read failed: (.+)$",
+    "replacement": "读取失败：{0}"
+  },
+  {
+    "pattern": "^GET (.+) from (.+) → 204 \\(the client has every event, so it stops reconnecting\\)$",
+    "replacement": "GET {0}，来自 {1} → 204（客户端已有全部事件，不再重连）"
+  },
+  {
+    "pattern": "^Option --(.+) is missing its value$",
+    "replacement": "选项 --{0} 缺少取值"
+  },
+  {
+    "pattern": "^Option (.+) is missing its value$",
+    "replacement": "选项 {0} 缺少取值"
+  },
+  {
+    "pattern": "^Ignored extra argument \\`(.+)\\`$",
+    "replacement": "忽略了多余参数 `{0}`"
+  },
+  {
+    "pattern": "^Could not read query file \\`(.+)\\`$",
+    "replacement": "读不了查询文件 `{0}`"
+  },
+  {
+    "pattern": "^Could not read headers file \\`(.+)\\`$",
+    "replacement": "读不了请求头文件 `{0}`"
+  },
+  {
+    "pattern": "^Ignored invalid --max-time \\`(.+)\\`$",
+    "replacement": "忽略了无效的 --max-time `{0}`"
+  },
+  {
+    "pattern": "^Ignored invalid --max-redirs \\`(.+)\\`$",
+    "replacement": "忽略了无效的 --max-redirs `{0}`"
+  },
+  {
+    "pattern": "^Ignored proxy \\`(.+)\\`; set a proxy in Settings$",
+    "replacement": "忽略了代理 `{0}`；请在设置里配置代理"
+  },
+  {
+    "pattern": "^Ignored --(.+) \\`(.+)\\`; configure certificates in Settings$",
+    "replacement": "忽略了 --{0} `{1}`；请在设置里配置证书"
+  },
+  {
+    "pattern": "^Ignored unsupported option --(.+)$",
+    "replacement": "忽略了不支持的选项 --{0}"
+  },
+  {
+    "pattern": "^Ignored cookie file \\`(.+)\\`; only inline cookies are imported$",
+    "replacement": "忽略了 Cookie 文件 `{0}`；只导入命令里直接写的 Cookie"
+  },
+  {
+    "pattern": "^Form field \\`(.+)\\` reads its value from file \\`(.+)\\`; enter it manually$",
+    "replacement": "表单字段 `{0}` 的值来自文件 `{1}`；请手动填写"
+  },
+  {
+    "pattern": "^Not a cURL command: it should start with \\`curl\\`, not \\`(.+)\\`$",
+    "replacement": "不是 cURL 命令：应该以 `curl` 开头，而不是 `{0}`"
+  },
+  {
+    "pattern": "^Skipped malformed header \\`(.+)\\`$",
+    "replacement": "跳过了格式不对的请求头 `{0}`"
+  },
+  {
+    "pattern": "^The response isn't valid JSON \\((.+)\\), so it can't be filtered$",
+    "replacement": "响应不是合法 JSON（{0}），无法过滤"
+  },
+  {
+    "pattern": "^Not a valid JSONPath expression: (.+)$",
+    "replacement": "不是合法的 JSONPath 表达式：{0}"
+  },
+  {
+    "pattern": "^The response nests arrays and objects more than (.+) levels deep, so it can't be filtered$",
+    "replacement": "响应里数组和对象嵌套超过 {0} 层，无法过滤"
+  },
+  {
+    "pattern": "^Not a valid jq expression(.*)$",
+    "replacement": "不是合法的 jq 表达式{0}"
+  },
+  {
+    "pattern": "^Unknown in jq: (.+)$",
+    "replacement": "jq 里不认识：{0}"
+  },
+  {
+    "pattern": "^The (.+) document is larger than (.+) MB$",
+    "replacement": "{0} 文档超过 {1} MB"
+  },
+  {
+    "pattern": "^The (.+) document is empty$",
+    "replacement": "{0} 文档是空的"
+  },
+  {
+    "pattern": "^The (.+) document isn't valid JSON: (.+)$",
+    "replacement": "{0} 文档不是合法 JSON：{1}"
+  },
+  {
+    "pattern": "^Invalid JSON: (.+)$",
+    "replacement": "JSON 无效：{0}"
+  },
+  {
+    "pattern": "^Invalid YAML: (.+)$",
+    "replacement": "YAML 无效：{0}"
+  },
+  {
+    "pattern": "^Security scheme \"(.+)\" \\((.+)\\) is not supported; set up auth manually$",
+    "replacement": "不支持安全方案“{0}”（{1}）；请手动配置鉴权"
+  }
+]

@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { initI18n } from "./i18n";
 import { restoreAppearance } from "./lib/appearance";
 import "./styles.css";
 
@@ -8,6 +9,8 @@ import "./styles.css";
 if (window.matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.classList.add("dark");
 // And the last zoom and fonts, so nothing jumps when settings load.
 restoreAppearance();
+// 汉化（fork 注入）：默认中文，VITE_ZORVIK_LOCALE=en 时完全关闭。
+initI18n();
 
 // Hide the browser's own context menu (Reload, Inspect…) except where text can be edited
 // or selected; app menus are drawn by Radix and are unaffected.
