@@ -11,6 +11,7 @@ import type { Rewards } from "../bindings/Rewards";
 import type { TestOutQuestion } from "../bindings/TestOutQuestion";
 import { onEvent } from "../lib/events";
 import { api, errorMessage } from "../lib/rpc";
+import { activeLocale } from "../i18n/config";
 import { confirm } from "./dialogs";
 import { refreshRunning, refreshServers } from "./servers";
 import { resetTabs, restoreTabs } from "./tabs";
@@ -109,10 +110,15 @@ export async function initAcademy() {
   }
 }
 
+/** The course follows the UI language; the Rust side stays English for anything else. */
+function courseLocale(): string {
+  return activeLocale() ?? "en";
+}
+
 export async function ensureCourse() {
   if (get().course) return;
   const [course, progress] = await Promise.all([
-    api.call<CourseView>("academy.course"),
+    api.call<CourseView>("academy.course", { locale: courseLocale() }),
     api.call<ProgressView>("academy.progress", { utcOffsetMinutes: -new Date().getTimezoneOffset() }),
   ]);
   set({ course, progress });
@@ -170,7 +176,7 @@ export async function openAcademy(page: AcademyPage = get().page) {
 export async function lessonDetail(id: string): Promise<LessonView> {
   const cached = get().lessons[id];
   if (cached) return cached;
-  const lesson = await api.call<LessonView>("academy.lesson", { id });
+  const lesson = await api.call<LessonView>("academy.lesson", { id, locale: courseLocale() });
   set((s) => ({ lessons: { ...s.lessons, [id]: lesson } }));
   return lesson;
 }
@@ -178,7 +184,7 @@ export async function lessonDetail(id: string): Promise<LessonView> {
 export function openLesson(id: string) {
   set({ page: { kind: "lesson", id } });
   // Remember it for "Continue" (the backend notes it when the lesson is read).
-  void api.call("academy.lesson", { id }).catch(() => {});
+  void api.call("academy.lesson", { id, locale: courseLocale() }).catch(() => {});
 }
 
 export const goHome = () => set({ page: { kind: "home" } });

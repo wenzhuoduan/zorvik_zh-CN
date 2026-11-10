@@ -1,5 +1,7 @@
 // Pure helpers for the Encoders tool: Base64, URL, hex, JWT, hashes, timestamps.
 // Text is always UTF-8. Decoders throw an Error with a message for the user.
+import { activeLocale } from "../i18n/config";
+import { t } from "../i18n/translate";
 
 const encoder = new TextEncoder();
 
@@ -272,9 +274,9 @@ const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
 /** "in 3 days", "5 minutes ago", "now". */
 export function relativeTime(ms: number, now = Date.now()): string {
   const diff = ms - now;
-  const fmt = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const fmt = new Intl.RelativeTimeFormat(activeLocale() ?? "en", { numeric: "auto" });
   for (const [unit, size] of UNITS) {
     if (Math.abs(diff) >= size) return fmt.format(Math.trunc(diff / size), unit);
   }
-  return "now";
+  return t("now") ?? "now";
 }

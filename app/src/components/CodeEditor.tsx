@@ -42,6 +42,7 @@ import {
   WidgetType,
 } from "@codemirror/view";
 import { tags as t } from "@lezer/highlight";
+import { t as tr, tf as trf } from "../i18n/translate";
 import { HINT_BOX, HINT_TONE, variableHint } from "./VarInput";
 
 export type EditorLanguage =
@@ -126,12 +127,16 @@ class HiddenText extends WidgetType {
   toDOM(view: EditorView) {
     const wrap = document.createElement("span");
     wrap.className = "zv-hidden-text";
-    wrap.textContent = `… ${hiddenSize(this.hidden)} more `;
     const more = document.createElement("button");
     more.type = "button";
     more.className = "zv-show-more";
-    more.textContent = "Show more";
-    more.title = "Draw more of this line (very long lines are slow to draw; Copy and Save have all of it)";
+    // 编辑器里的文字默认不进 DOM 翻译层（要保护代码），这里的提示语就地过一遍词典。
+    const shortened = `… ${hiddenSize(this.hidden)} more `;
+    wrap.textContent = trf(shortened) ?? shortened;
+    more.textContent = tr("Show more") ?? "Show more";
+    more.title =
+      tr("Draw more of this line (very long lines are slow to draw; Copy and Save have all of it)") ??
+      "Draw more of this line (very long lines are slow to draw; Copy and Save have all of it)";
     more.addEventListener("mousedown", (e) => e.preventDefault());
     more.addEventListener("click", () => view.dispatch({ effects: showMore.of(this.lineFrom) }));
     wrap.append(more);
@@ -143,7 +148,8 @@ class HiddenText extends WidgetType {
 }
 
 function hiddenSize(chars: number): string {
-  if (chars < 10_000) return `${chars.toLocaleString()} characters`;
+  const counted = `${chars.toLocaleString()} characters`;
+  if (chars < 10_000) return trf(counted) ?? counted;
   const mb = chars / (1024 * 1024);
   return mb >= 1 ? `${mb.toFixed(1)} MB` : `${Math.round(chars / 1024)} KB`;
 }
@@ -368,7 +374,7 @@ export function CodeEditor({
       // the readOnly state is what blocks edits.
       c.readOnly.of(EditorState.readOnly.of(readOnly)),
       c.wrap.of(lineWrapping ? EditorView.lineWrapping : []),
-      c.placeholder.of(placeholder ? cmPlaceholder(placeholder) : []),
+      c.placeholder.of(placeholder ? cmPlaceholder(tr(placeholder) ?? placeholder) : []),
       c.extra.of(extra ?? []),
       EditorView.updateListener.of((u) => {
         if (u.docChanged) onChangeRef.current?.(u.state.doc.toString());
@@ -418,7 +424,9 @@ export function CodeEditor({
   }, [lineWrapping]);
 
   useEffect(() => {
-    view.current?.dispatch({ effects: compartments.current.placeholder.reconfigure(placeholder ? cmPlaceholder(placeholder) : []) });
+    view.current?.dispatch({
+      effects: compartments.current.placeholder.reconfigure(placeholder ? cmPlaceholder(tr(placeholder) ?? placeholder) : []),
+    });
   }, [placeholder]);
 
   useEffect(() => {

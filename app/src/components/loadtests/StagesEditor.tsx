@@ -92,7 +92,7 @@ export const StagesEditor = memo(function StagesEditor({
 
       <div className="flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1">
-          <span className="text-[11.5px] font-medium text-muted">Peak ({info.unit})</span>
+          <span className="text-[11.5px] font-medium text-muted">{`Peak (${info.unit})`}</span>
           <NumberInput
             aria-label="Peak load"
             value={peak}
@@ -125,7 +125,7 @@ export const StagesEditor = memo(function StagesEditor({
         <div className="grid h-7 grid-cols-[22px_minmax(0,1fr)_minmax(0,1fr)_70px] items-center gap-2 border-b border-line bg-panel-2/60 px-2.5 text-[11px] font-medium text-faint">
           <span>#</span>
           <span>Duration (s)</span>
-          <span>Target ({info.unit})</span>
+          <span>{`Target (${info.unit})`}</span>
           <span />
         </div>
         {stages.map((s, i) => {
@@ -227,7 +227,7 @@ function StagePreview({ stages, model, testId }: { stages: LoadStage[]; model: L
       )}
       {total > 0 ? (
         <span className="absolute left-2.5 top-1.5 rounded bg-panel-2/80 px-1 text-[10.5px] font-medium tabular-nums text-muted">
-          peak {formatCount(peakTarget(stages))} {info.unit}
+          {`peak ${formatCount(peakTarget(stages))} ${info.unit}`}
         </span>
       ) : (
         <span className="absolute inset-0 flex items-center justify-center text-[11.5px] text-faint">No duration yet</span>

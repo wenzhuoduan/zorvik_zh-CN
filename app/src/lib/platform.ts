@@ -3,32 +3,45 @@ import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { openUrl as tauriOpenUrl } from "@tauri-apps/plugin-opener";
 import { isTauri } from "./rpc";
+import { t } from "../i18n/translate";
 
 export async function pickFolder(title: string): Promise<string | null> {
+  const label = t(title) ?? title;
   if (isTauri) {
-    const r = await open({ directory: true, multiple: false, title });
+    const r = await open({ directory: true, multiple: false, title: label });
     return typeof r === "string" ? r : null;
   }
-  return window.prompt(`${title}\nEnter an absolute folder path:`)?.trim() || null;
+  const hint = t("Enter an absolute folder path:") ?? "Enter an absolute folder path:";
+  return window.prompt(`${label}\n${hint}`)?.trim() || null;
 }
 
 export async function pickFile(title: string, extensions?: string[]): Promise<string | null> {
+  const label = t(title) ?? title;
   if (isTauri) {
     const r = await open({
       multiple: false,
-      title,
-      filters: extensions ? [{ name: "Supported files", extensions }, { name: "All files", extensions: ["*"] }] : undefined,
+      title: label,
+      filters: extensions
+        ? [
+            { name: t("Supported files") ?? "Supported files", extensions },
+            { name: t("All files") ?? "All files", extensions: ["*"] },
+          ]
+        : undefined,
     });
     return typeof r === "string" ? r : null;
   }
-  return window.prompt(`${title}\nEnter an absolute file path:`)?.trim() || null;
+  const hint = t("Enter an absolute file path:") ?? "Enter an absolute file path:";
+  return window.prompt(`${label}\n${hint}`)?.trim() || null;
 }
 
 export async function pickSavePath(title: string, defaultPath?: string, filters?: { name: string; extensions: string[] }[]): Promise<string | null> {
+  const label = t(title) ?? title;
   if (isTauri) {
-    return (await save({ title, defaultPath, filters })) ?? null;
+    const translated = filters?.map((f) => ({ ...f, name: t(f.name) ?? f.name }));
+    return (await save({ title: label, defaultPath, filters: translated })) ?? null;
   }
-  return window.prompt(`${title}\nEnter an absolute file path:`, defaultPath)?.trim() || null;
+  const hint = t("Enter an absolute file path:") ?? "Enter an absolute file path:";
+  return window.prompt(`${label}\n${hint}`, defaultPath)?.trim() || null;
 }
 
 export async function openExternal(url: string): Promise<void> {

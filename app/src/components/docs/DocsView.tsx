@@ -5,7 +5,7 @@ import { isMac } from "../../lib/platform";
 import type { ToolTab } from "../../store/tabs";
 import { useWorkspace } from "../../store/workspace";
 import { cx, Kbd } from "../ui";
-import { QUICK_START, SHORTCUTS, TOPICS } from "./content";
+import { QUICK_START, SHORTCUTS, TOPICS } from "../../i18n/docs";
 import { docImage, TOPIC_ICONS } from "./media";
 
 /** `[mod+N]` → a keycap, `code` → monospace. */

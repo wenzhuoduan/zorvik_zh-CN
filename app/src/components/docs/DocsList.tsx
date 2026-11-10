@@ -1,7 +1,7 @@
 // Sidebar: the docs' topics; picking one opens the Docs tab at it.
 import { BookOpen, Keyboard } from "lucide-react";
 import { openDocs } from "../../store/tabs";
-import { TOPICS } from "./content";
+import { TOPICS } from "../../i18n/docs";
 import { TOPIC_ICONS } from "./media";
 
 function Item({ icon, label, hint, onClick, testId }: { icon: React.ReactNode; label: string; hint?: string; onClick: () => void; testId?: string }) {
