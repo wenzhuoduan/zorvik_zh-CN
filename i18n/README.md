@@ -457,9 +457,17 @@ $env:VITE_ZORVIK_LOCALE="en"; npm run e2e
 - 依赖下载走本地代理 `http://127.0.0.1:7890`，已写入 `~/.cargo/config.toml` 的 `[http] proxy`（仓库内未改）。代理关闭时 `cargo` 与 `npx playwright install` 会连接被拒。
 - 构建产物：`target/debug/{zorvik-desktop,zorvik,zorvik-devbridge,zorvik-testserver}.exe`、`app/dist/`（均在 `.gitignore` 内）。
 - Playwright：Chromium 1243（含 headless shell、ffmpeg、winldd）已装入 `%LOCALAPPDATA%\ms-playwright`；英文 e2e 用临时 workspace，不碰真实工作区。
-- 未验证：`npm run tauri build`（需要 NSIS/WiX 与签名密钥）、`cargo test` 全量。
+- 未验证：`cargo test` 全量。
+- 打包：`cd app; npm run package -- --bundles nsis` 已在本机跑通（`target/release/bundle/nsis/Zorvik_0.3.1_x64-setup.exe`，31.7 MB；绿色版 `dist-portable/`）。NSIS 工具链需预置在 `%LOCALAPPDATA%\tauri\NSIS`：`nsis-3.11.zip` 解压到该目录（`Bin\makensis.exe` 与 `nsis-3.11\` 两种布局都铺），`nsis_tauri_utils.dll`（v0.5.3）放到 `Plugins\x86-unicode\additional\`；直连 GitHub 慢时用 `https://gh-proxy.com/https://github.com/...` 下这两个文件。
 
-## 9. 新会话交接
+## 9. 分支、署名与发布（fork 专属）
+
+- **远端**：`origin` = `https://github.com/wenzhuoduan/zorvik_zh-cn`（读走 HTTPS，推走 `git@github.com:wenzhuoduan/zorvik_zh-cn.git`）；`upstream` = `https://github.com/LibreGuild/zorvik.git`。仓库真名是小写 `zorvik_zh-cn`（GitHub 对旧名 `zorvik_zh-CN` 只做重定向）。
+- **分支**：`main` 只做上游镜像（合并上游后快进），汉化工作全在长期分支 `i18n/zh-cn` 上。将来若要给上游提 PR，从 `main` 另开单功能分支（如 `i18n/engine`），一个 PR 一个主题。
+- **署名**：提交信息统一带 `Co-authored-by: DeepSeek <noreply@deepseek.com>`，由本机 `.git/hooks/prepare-commit-msg` 自动追加（合并提交除外）。GitHub 的 Contributors 只统计"邮箱已绑定到账号"的作者/共同作者，所以想让 DeepSeek 出现在贡献者列表里，得有一个 GitHub 账号把该邮箱加上；否则 trailer 只出现在提交信息里。
+- **发布**：`.github/workflows/release-zh.yml` 监听 `zh-v*` 标签（`zh-v0.3.1` 这类），在 `windows-latest` 上出 NSIS 安装包 + 绿色版并**直接发布** Release；也可在 Actions 页面手动跑（只上传产物）。它不动上游 `ci.yml`，也不需要 `release` environment 的更新签名密钥——因此产出的包不含自动更新签名。
+
+## 10. 新会话交接
 
 会话可能随时中断，所以状态都落在文件里，不在对话里：
 
