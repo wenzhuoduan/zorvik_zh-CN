@@ -9,7 +9,7 @@ import { useAcademy } from "./academy";
 import { useAgents } from "./agents";
 import { useLoadTests } from "./loadtests";
 import { useServers } from "./servers";
-import { isDirty, isLoadTestTab, isRequestTab, isServerTab, useTabs } from "./tabs";
+import { isDirty, isLoadTestTab, isRequestTab, isScenarioTab, isServerTab, isVariablesTab, useTabs } from "./tabs";
 
 export type UpdateStatus =
   | { state: "idle" }
@@ -72,9 +72,8 @@ export function newVersion(info: UpdateInfo | null): string | null {
  *  or installing it automatically didn't work. */
 export const installsByHand = (info: UpdateInfo) => !info.canInstall || (info.status.state === "available" && info.status.byHand);
 
-/** The release page of a version (the nightly channel has one page, replaced each day). */
-export const releaseNotesUrl = (info: UpdateInfo, version: string, channel: "stable" | "nightly") =>
-  `${info.downloadPage}/tag/${channel === "nightly" ? "nightly" : `v${version}`}`;
+/** The release page of a version. */
+export const releaseNotesUrl = (info: UpdateInfo, version: string) => `${info.downloadPage}/tag/v${version}`;
 
 export function dismissNotice(version: string) {
   useUpdates.setState({ dismissed: version });
@@ -93,7 +92,7 @@ export function runningWork(): string[] {
   if (useLoadTests.getState().active) work.push("a load test is running");
   const unsaved = useTabs
     .getState()
-    .tabs.filter((t) => (isServerTab(t) || isLoadTestTab(t) || (isRequestTab(t) && t.path)) && isDirty(t)).length;
+    .tabs.filter((t) => (isServerTab(t) || isLoadTestTab(t) || isScenarioTab(t) || isVariablesTab(t) || (isRequestTab(t) && t.path)) && isDirty(t)).length;
   if (unsaved) work.push(unsaved === 1 ? "a tab has unsaved changes" : `${unsaved} tabs have unsaved changes`);
   const lab = useAcademy.getState().lab;
   if (lab && !lab.finished) work.push("a Bootcamp lab is running");

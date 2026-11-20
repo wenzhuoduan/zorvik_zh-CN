@@ -3,7 +3,7 @@
 The one place for the rules of this repository, for people and for AI coding agents. `CLAUDE.md`, `AGENTS.md` and `GEMINI.md` only point here, so every agent reads the same rules. When you learn something the next person needs (a rule, a trap, a decision), write it in this file, not in an agent-specific one.
 
 ## What Zorvik is
-An open-source desktop app for API and network testing: an API client (HTTP, GraphQL, gRPC, WebSocket, Socket.IO, SSE, MQTT, TCP, UDP, DNS), an MCP client and MCP servers for testing the tools AI agents use, collection runs, load tests, mock and test servers, a Training Bootcamp, and a `zorvik` command line. Coding agents control it through MCP (`zorvik mcp`).
+An open-source desktop app for API and network testing: an API client (HTTP, GraphQL, gRPC, WebSocket, Socket.IO, SSE, MQTT, TCP, UDP, DNS), an MCP client and MCP servers for testing the tools AI agents use, collection runs, scenarios (requests chained as steps), load tests, mock and test servers, a Training Bootcamp, and a `zorvik` command line. Coding agents control it through MCP (`zorvik mcp`).
 
 Promises that shape every change:
 - **Every feature is free.** No paid plans, no accounts, no cloud sync, none planned.
@@ -58,7 +58,7 @@ E2E needs `cargo build -p zorvik-cli` once. Ports it uses: test servers 18787, d
 - Docs read like a finished product: no internal history, phases or roadmaps.
 
 **Security**
-- Workspace files come from Git and are untrusted input. Requests carry secrets: keep them out of files, logs, errors and agent output.
+- Workspace files come from Git and are untrusted input. Requests carry secrets: keep them out of files, logs, errors and agent output. The console (`crates/api/src/console.rs`) shows the user requests as they were sent, so it lives in memory only; what agents read of it is redacted.
 - Agent tools check permissions in Rust on every call; never add a tool that skips them.
 - Never print, commit or log keys, tokens or passwords (including the updater signing key and its password, which live only in GitHub secrets).
 
@@ -76,4 +76,10 @@ Things that cost time once. Add to this list when you hit a new one.
 - Updates are signed with the project's updater key: the public key is in `app/src-tauri/tauri.conf.json`, the private key only in the GitHub environment `release`, which only `main` and `v*` tags can use, and only the `sign-updates` job reads it (see `docs/ci-release.md`). Never change the public key casually; installed copies stop accepting updates. `ZORVIK_UPDATE_URL` points a build at a local `latest.json` for testing.
 - Starlight sidebar groups that autogenerate need `{ label, items: [{ autogenerate }] }`.
 - API catalog (`crates/api/catalog/catalog.yaml`): never bundle a publisher's description in the app; entries download it when the user imports. A description whose license or terms don't allow use outside the publisher becomes a `link` entry. Check new or changed entries with `CATALOG_ONLY=<ids> cargo test -p zorvik-api --test catalog_live -- --ignored --nocapture`; the weekly `catalog.yml` workflow checks them all.
+- The Windows installer's hooks (`app/src-tauri/windows/hooks.nsh`) are only built by the release jobs. Check a change with `makensis -WX` on a small script that includes the file and inserts each `NSIS_HOOK_*` macro in an `Install` and an `Uninstall` section (NSIS is in Homebrew and apt); what the hooks do still has to be tried on Windows.
+- A dialog whose panes have a fixed height (`h-[480px]`) needs `bodyClassName="flex flex-col …"` on the `Modal` and `min-h-0` on the panes, or a short window gives it two scrollbars.
+- Console lines of scripts reach the app's console through `Host::log` as the script runs, and come back in the script's output too (the response's Console tab): log a line through one of them, not both, or it shows twice.
 - The website's main site is built from the latest release; `main` goes to the preview at `/zorvik/next/`. So docs changes go live on the main site with the next release (`docs/ci-release.md`, Website).
+- Scenario steps (`crates/formats/src/scenario.rs`) are a flattened enum tagged by `type`, which serde reads through a buffer. Two things follow: text fields take a hand-written number (`value: 201`) only through the `text` deserializer, and `serde_ignored` can't see misspelled fields, so the agents' `save_scenario` checks field names itself (`unknown_fields` in `crates/api/src/agents/tools/scenarios.rs`). A new field goes into the type, that list and the tool's schema (a test checks the schema against the list).
+- A scenario's values never leave it: its run keeps nothing with `keep_local_values`, and what its scripts set on the environment, the workspace or globals becomes a value of the scenario (`Scope::absorb` in `crates/api/src/scenario.rs`). Its values are data layers (`VarContext::push_data_layer`): what a server sent is never expanded as a template, or a response could make the next request send a secret. Don't put them in a template layer.
+- A scenario's run is a run of the collection runner (`runner.rs`): the same slot, events, details and reports, so `runner.stop`, `runner.details` and `runner.export` serve both. Results of steps that only direct others (`StepKind::is_flow`) are not counted, in Rust (`runner::count`) and in the UI (`withResults`): change both.

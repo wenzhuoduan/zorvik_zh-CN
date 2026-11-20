@@ -158,6 +158,37 @@ async fn agent_edits_sends_runs_and_is_asked() {
     assert_eq!(res["status"], 200);
     assert!(!text.contains("s3cret-token-value"), "{text}");
     assert!(text.contains("••••••"), "{text}");
+    // The console has the send with what went out and came back, the secret hidden there too
+    // (the echoed header in the response body included).
+    let (err, console, text) = agent.call("read_console", json!({ "kind": "requests" })).await;
+    assert!(!err, "{text}");
+    let line = console["lines"].as_array().unwrap().last().expect("the send");
+    assert_eq!(
+        (line["request"].as_str(), line["source"].as_str(), line["status"].as_u64()),
+        (Some("Echo"), Some("agent"), Some(200))
+    );
+    assert!(line["requestHeaders"].as_array().unwrap().iter().any(|h| h == "Authorization: ••••••"), "{line}");
+    assert!(line["responseBody"]["text"].as_str().is_some_and(|b| b.contains("authorization")), "{line}");
+    assert!(!text.contains("s3cret-token-value"), "{text}");
+    let (_, none, _) = agent.call("read_console", json!({ "errorsOnly": true })).await;
+    assert_eq!(none["lines"], json!([]));
+    // Searching sees what the agent sees: a guess at the secret finds nothing.
+    let (_, found, _) = agent.call("read_console", json!({ "search": "ECHO?q=1" })).await;
+    assert_eq!(found["lines"].as_array().map(Vec::len), Some(1), "{found}");
+    for guess in ["s3cret-token-value", "s3cret"] {
+        let (_, guessed, _) = agent.call("read_console", json!({ "search": guess })).await;
+        assert_eq!(guessed["lines"], json!([]), "{guess}");
+    }
+    // A secret that changes later stays hidden in what was sent with the old value.
+    let (err, _, text) = agent
+        .call("save_environment", json!({ "name": "Local", "variables": [{ "key": "token", "value": "an0ther-token-value", "secret": true }] }))
+        .await;
+    assert!(!err, "{text}");
+    let (_, _, text) = agent.call("read_console", json!({})).await;
+    assert!(!text.contains("s3cret-token-value"), "{text}");
+    agent
+        .call("save_environment", json!({ "name": "Local", "variables": [{ "key": "token", "value": "s3cret-token-value", "secret": true }] }))
+        .await;
 
     // A redirect to a host nobody approved is stopped before it connects…
     let redirect = json!({ "request": { "url": "{{base}}/redirect-to?url=http://blocked.example/x" } });
@@ -706,6 +737,175 @@ async fn run_failures_never_show_an_agent_a_secret() {
     assert!(!err, "{text}");
     assert_eq!(run["summary"]["failed"], 1, "{text}");
     assert!(!text.contains("s3cret") && text.contains("token"), "{text}");
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn agent_builds_and_runs_a_scenario() {
+    let server = TestServer::start().await;
+    let (api, mut agent, asked, _data, ws, _listener) = connected("Scenarios").await;
+    let variables = json!([{ "key": "base", "value": server.url("") }, { "key": "token", "value": "s3cret-token-value", "secret": true }]);
+    let (err, _, text) =
+        agent.call("save_environment", json!({ "name": "Local", "activate": true, "variables": variables })).await;
+    assert!(!err, "{text}");
+    let requests = json!([
+        { "folder": "Cart", "name": "Create", "url": "{{base}}/echo?id=7&t={{token}}&sid=session-abc-123" },
+        { "folder": "Cart", "name": "Get", "url": "{{base}}/echo?cart={{cartId}}&n={{n}}" },
+    ]);
+    let (err, _, text) = agent.call("save_requests", json!({ "requests": requests })).await;
+    assert!(!err, "{text}");
+
+    // Misspelled fields, requests that aren't saved and scenarios that don't exist are refused.
+    let step = |extra: Value| {
+        let mut step = json!({ "type": "request", "request": "Cart/Create.yaml" });
+        step.as_object_mut().unwrap().extend(extra.as_object().unwrap().clone());
+        step
+    };
+    let (err, _, text) = agent
+        .call("save_scenario", json!({ "name": "Cart", "scenario": { "steps": [step(json!({ "output": [] }))] } }))
+        .await;
+    assert!(err && text.contains("`scenario.steps[0].output`"), "{text}");
+    let missing = json!({ "steps": [{ "type": "request", "request": "Cart/Nope.yaml" }] });
+    let (err, _, text) = agent.call("save_scenario", json!({ "name": "Cart", "scenario": missing })).await;
+    assert!(err && text.contains("Cart/Nope.yaml") && text.contains("save_requests"), "{text}");
+    let unknown = json!({ "steps": [{ "type": "scenario", "scenario": "Nope" }] });
+    let (err, _, text) = agent.call("save_scenario", json!({ "name": "Cart", "scenario": unknown })).await;
+    assert!(err && text.contains("Scenario 'Nope' not found"), "{text}");
+    let (err, _, text) = agent.call("write_file", json!({ "path": "scenarios/Cart.yaml", "text": "x" })).await;
+    assert!(err && text.contains("belongs to Zorvik"), "{text}");
+
+    let scenario = json!({
+        "docs": "Creates a cart and reads it back.",
+        "variables": [{ "key": "n", "value": "1" }],
+        "steps": [
+            step(json!({ "outputs": [{ "variable": "cartId", "path": "$.args.id" }, { "variable": "seen", "path": "$.args.t", "secret": true }, { "variable": "sid", "path": "$.args.sid", "secret": true }], "checks": [{ "from": "status", "value": "200" }] })),
+            { "type": "forEach", "list": "a,b", "steps": [
+                { "type": "request", "request": "Cart/Get.yaml", "inputs": [{ "key": "n", "value": "{{item}}" }], "checks": [{ "path": "$.args.cart", "value": "{{cartId}}" }] },
+            ] },
+            { "type": "ask", "variable": "otp" },
+            { "type": "request", "name": "Fails", "request": "Cart/Get.yaml", "checks": [{ "path": "$.args.n", "value": "{{otp}}" }] },
+        ],
+    });
+    let (err, saved, text) = agent.call("save_scenario", json!({ "name": "Cart", "scenario": scenario })).await;
+    assert!(!err, "{text}");
+    assert_eq!(saved["id"], "Cart");
+    assert!(ws.path().join("scenarios/Cart.yaml").exists());
+    let (_, list, _) = agent.call("list_scenarios", json!({})).await;
+    assert_eq!(list["scenarios"], json!([{ "id": "Cart", "name": "Cart", "steps": 5, "seq": 0 }]));
+    let (_, info, _) = agent.call("get_workspace", json!({})).await;
+    assert_eq!(info["scenarios"], 1);
+    let (err, read, text) = agent.call("read_scenario", json!({ "name": "cart" })).await;
+    assert!(!err, "{text}");
+    assert_eq!(read["scenario"]["steps"][1]["type"], "forEach");
+    assert_eq!(read["values"], json!([]));
+
+    // A run nobody watches can't ask: the value comes with the run.
+    let (err, run, text) = agent.call("run_scenario", json!({ "name": "Cart", "waitSeconds": 30 })).await;
+    assert!(!err, "{text}");
+    assert_eq!(run["summary"]["passed"], false, "{text}");
+    assert!(run["failures"][0]["error"].as_str().unwrap().contains("give it a value"), "{text}");
+    let (err, run, text) =
+        agent.call("run_scenario", json!({ "name": "Cart", "variables": { "otp": "9" }, "waitSeconds": 30 })).await;
+    assert!(!err, "{text}");
+    assert_eq!((run["status"].clone(), run["summary"]["failed"].clone()), (json!("finished"), json!(1)), "{text}");
+    let names: Vec<&str> = run["steps"].as_array().unwrap().iter().filter_map(|s| s["name"].as_str()).collect();
+    assert_eq!(names, ["Create", "For each item in a,b", "item = a", "Get", "item = b", "Get", "Ask for otp", "Fails"]);
+    assert_eq!(run["steps"][0]["saved"]["cartId"], "7");
+    assert_eq!(run["failures"][0]["name"], "Fails");
+    assert_eq!(run["failures"][0]["failedTests"][0]["name"], "$.args.n equals {{otp}}");
+    // Neither the environment's secret nor the value saved as secret comes back.
+    assert!(!text.contains("s3cret-token-value"), "{text}");
+    let (_, read, text) = agent.call("read_scenario", json!({ "name": "Cart" })).await;
+    assert!(!text.contains("s3cret-token-value"), "{text}");
+    assert!(read["values"].as_array().unwrap().iter().any(|v| v["key"] == "cartId" && v["value"] == "7"), "{text}");
+    // What a step saved as secret is hidden in the console too, also in the lines before it.
+    let (_, _, text) = agent.call("read_console", json!({})).await;
+    assert!(!text.contains("session-abc-123") && text.contains("{{sid}}"), "{text}");
+    // Up to a step, and only a step with what the last run left.
+    let (_, run, text) =
+        agent.call("run_scenario", json!({ "name": "Cart", "toStep": "steps/0", "waitSeconds": 30 })).await;
+    assert_eq!(
+        (run["summary"]["passed"].clone(), run["steps"].as_array().map(Vec::len)),
+        (json!(true), Some(1)),
+        "{text}"
+    );
+    let (_, run, text) =
+        agent.call("run_scenario", json!({ "name": "Cart", "onlyStep": "steps/1/steps/0", "waitSeconds": 30 })).await;
+    assert_eq!(run["summary"]["passed"], true, "{text}");
+    // The environment was only read.
+    assert_eq!(api.call("vars.local", json!({})).await.unwrap(), json!([]));
+
+    let (err, _, text) = agent.call("open_in_app", json!({ "scenario": "Cart" })).await;
+    assert!(!err, "{text}");
+    let (err, deleted, text) = agent.call("delete_items", json!({ "scenarios": ["Cart"] })).await;
+    assert!(!err, "{text}");
+    // The trash may be unavailable (CI): either way the user was asked about this scenario.
+    assert!(
+        deleted["deleted"] == json!(["Scenario Cart"]) || deleted["failed"][0]["item"] == "Scenario Cart",
+        "{text}"
+    );
+    assert!(
+        asked.lock().unwrap().iter().any(|(kind, items)| *kind == ConfirmKind::Delete && items == &["Scenario Cart"])
+    );
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn agent_keeps_scenarios_in_folders() {
+    let server = TestServer::start().await;
+    let (api, mut agent, asked, _data, ws, _listener) = connected("Folders").await;
+    let requests = json!([{ "name": "Ping", "url": format!("{}/echo?ok=1", server.url("")) }]);
+    let (err, _, text) = agent.call("save_requests", json!({ "requests": requests })).await;
+    assert!(!err, "{text}");
+    let smoke = json!({ "steps": [{ "type": "request", "request": "Ping.yaml", "checks": [{ "from": "status", "value": "200" }] }] });
+
+    // In folders made as needed; the same name in two folders is two scenarios.
+    for folder in ["Shops/EU", "Shops/US"] {
+        let (err, saved, text) =
+            agent.call("save_scenario", json!({ "name": "Smoke", "folder": folder, "scenario": smoke })).await;
+        assert!(!err, "{text}");
+        assert_eq!(saved["id"], format!("{folder}/Smoke"));
+    }
+    assert!(ws.path().join("scenarios/Shops/EU/Smoke.yaml").is_file());
+    let (_, list, text) = agent.call("list_scenarios", json!({})).await;
+    assert_eq!(list["folders"], json!(["Shops", "Shops/EU", "Shops/US"]), "{text}");
+    let ids: Vec<&str> = list["scenarios"].as_array().unwrap().iter().filter_map(|s| s["id"].as_str()).collect();
+    assert_eq!(ids, ["Shops/EU/Smoke", "Shops/US/Smoke"]);
+    // Saved again in its folder: replaced, not a third one.
+    let (err, saved, text) =
+        agent.call("save_scenario", json!({ "name": "smoke", "folder": "shops/us", "scenario": smoke })).await;
+    assert!(!err && saved["id"] == "Shops/US/Smoke", "{text}");
+    assert_eq!(api.call("scenario.list", json!({})).await.unwrap()[0]["children"].as_array().unwrap().len(), 2);
+
+    // A name two scenarios have is not enough: the id says which.
+    let (err, _, text) = agent.call("run_scenario", json!({ "name": "Smoke", "waitSeconds": 30 })).await;
+    assert!(err && text.contains("Shops/EU/Smoke, Shops/US/Smoke"), "{text}");
+    let (err, run, text) = agent.call("run_scenario", json!({ "name": "Shops/EU/Smoke", "waitSeconds": 30 })).await;
+    assert!(!err && run["summary"]["passed"] == true, "{text}");
+    // A scenario that runs one in a folder, by its id.
+    let all = json!({ "steps": [{ "type": "scenario", "scenario": "Shops/US/Smoke" }] });
+    let (err, _, text) = agent.call("save_scenario", json!({ "name": "All", "scenario": all })).await;
+    assert!(!err, "{text}");
+
+    // Moved and renamed: the scenario that runs it follows.
+    let (err, moved, text) =
+        agent.call("move_scenario", json!({ "folder": "Shops/US", "toFolder": "Archive", "newName": "America" })).await;
+    assert!(!err && moved["id"] == "Archive/America", "{text}");
+    let (_, read, text) = agent.call("read_scenario", json!({ "name": "All" })).await;
+    assert_eq!(read["scenario"]["steps"][0]["scenario"], "Archive/America/Smoke", "{text}");
+    let (err, moved, text) = agent
+        .call("move_scenario", json!({ "scenario": "Archive/America/Smoke", "toFolder": "", "newName": "US smoke" }))
+        .await;
+    assert!(!err && moved["id"] == "US smoke", "{text}");
+    let (_, read, _) = agent.call("read_scenario", json!({ "name": "All" })).await;
+    assert_eq!(read["scenario"]["steps"][0]["scenario"], "US smoke");
+    let (err, _, text) = agent.call("move_scenario", json!({ "folder": "Nope", "toFolder": "" })).await;
+    assert!(err && text.contains("Folder 'Nope' not found"), "{text}");
+
+    // A folder is deleted with what is in it, once the user says so.
+    let (err, deleted, text) = agent.call("delete_items", json!({ "scenarioFolders": ["Shops"] })).await;
+    assert!(!err, "{text}");
+    let label = "Scenario folder Shops (1 scenario inside)";
+    assert!(deleted["deleted"] == json!([label]) || deleted["failed"][0]["item"] == label, "{text}");
+    assert!(asked.lock().unwrap().iter().any(|(kind, items)| *kind == ConfirmKind::Delete && items == &[label]));
 }
 
 #[tokio::test(flavor = "multi_thread")]

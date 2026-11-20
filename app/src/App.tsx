@@ -5,7 +5,6 @@ import { TabBar } from "./components/layout/TabBar";
 import { TitleBar } from "./components/layout/TitleBar";
 import { Welcome } from "./components/layout/Welcome";
 import { Workbench } from "./components/layout/Workbench";
-import { EnvironmentsModal } from "./components/modals/EnvironmentsModal";
 import {
   CommandPalette,
   CookiesModal,
@@ -14,11 +13,13 @@ import {
   SpecUpdateModal,
   ImportModal,
   MoveModal,
+  MoveScenarioModal,
   SaveAsModal,
   ShortcutsModal,
   WorkspaceSettingsModal,
 } from "./components/modals/MiscModals";
 import { ActivityRail } from "./components/layout/ActivityRail";
+import { ConsolePanel } from "./components/console/ConsolePanel";
 import { Celebrations } from "./components/academy/Celebrations";
 import { LabGuide } from "./components/academy/LabGuide";
 import { AgentConfirmDialog } from "./components/agents/AgentConfirmDialog";
@@ -31,9 +32,12 @@ import { initAcademy, useAcademy, useInBootcamp } from "./store/academy";
 import { initUpdates } from "./store/updates";
 import { UpdateNotice } from "./components/UpdateNotice";
 import { loadAgents } from "./store/agents";
+import { initConsole, toggleConsole } from "./store/console";
+import { showEnvironments } from "./store/environments";
 import { useDialogs } from "./store/dialogs";
 import { refreshLoadTests, resetLoadTestResults, restoreActiveRun, toggleLoadRun } from "./store/loadtests";
 import { toggleRun } from "./store/runner";
+import { refreshScenarios, toggleScenarioRun } from "./store/scenarios";
 import { autoStartServers, refreshRunning, refreshServers, runServerTab } from "./store/servers";
 import { loadSettings, useSettings, zoom } from "./store/settings";
 import {
@@ -43,7 +47,9 @@ import {
   isLoadTestTab,
   isRequestTab,
   isRunnerTab,
+  isScenarioTab,
   isServerTab,
+  isVariablesTab,
   newRequest,
   restoreTabs,
   saveTab,
@@ -125,6 +131,8 @@ export function useShortcuts(enabled: boolean) {
           } else if (isRunnerTab(active)) {
             // A held key repeats: it must not stop the run it just started.
             if (!e.repeat) void toggleRun(active);
+          } else if (isScenarioTab(active)) {
+            if (!e.repeat) void toggleScenarioRun(active);
           } else void send(activeId);
           break;
         }
@@ -147,11 +155,15 @@ export function useShortcuts(enabled: boolean) {
           break;
         case "e":
           e.preventDefault();
-          openModal({ type: "environments" });
+          showEnvironments();
           break;
         case ",":
           e.preventDefault();
           openModal({ type: "settings" });
+          break;
+        case "j":
+          e.preventDefault();
+          toggleConsole();
           break;
         case "l": {
           e.preventDefault();
@@ -170,8 +182,6 @@ function Modals() {
   switch (modal.type) {
     case "settings":
       return <SettingsModal />;
-    case "environments":
-      return <EnvironmentsModal focus={modal.focus} />;
     case "import":
       return <ImportModal parent={modal.parent} tab={modal.tab} />;
     case "cookies":
@@ -188,6 +198,8 @@ function Modals() {
       return <SaveAsModal tabId={modal.tabId} />;
     case "move":
       return <MoveModal path={modal.path} name={modal.name} />;
+    case "moveScenario":
+      return <MoveScenarioModal id={modal.id} name={modal.name} folder={modal.folder} />;
     case "palette":
       return <CommandPalette />;
     case "shortcuts":
@@ -201,6 +213,8 @@ export default function App() {
   const ready = useWorkspace((s) => s.ready);
   const info = useWorkspace((s) => s.info);
   const sidebarWidth = useUi((s) => s.sidebarWidth);
+  const consoleOpen = useUi((s) => s.consoleOpen);
+  const consoleHeight = useUi((s) => s.consoleHeight);
   const academyMode = useAcademy((s) => s.mode === "academy");
   const labRunning = useAcademy((s) => !!s.lab);
   const inBootcamp = useInBootcamp();
@@ -215,6 +229,7 @@ export default function App() {
     (async () => {
       try {
         await Promise.all([loadSettings(), initWorkspace(), loadAgents(), initAcademy()]);
+        void initConsole().catch((e) => console.error("console unavailable", e));
         void initUpdates().catch((e) => console.error("updates unavailable", e));
         const ws = useWorkspace.getState().info;
         if (ws) await restoreTabs(ws.path);
@@ -232,13 +247,14 @@ export default function App() {
     if (wsPath) void autoStartServers();
     resetLoadTestResults();
     void refreshLoadTests().then(() => restoreActiveRun());
+    void refreshScenarios();
   }, [wsPath]);
 
   useEffect(() => {
     // Keep unsaved-work warnings honest if the window is closed in a browser.
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
       if (import.meta.env.DEV) return;
-      if (useTabs.getState().tabs.some((t) => (isServerTab(t) || isLoadTestTab(t) || (isRequestTab(t) && t.path)) && isDirty(t))) e.preventDefault();
+      if (useTabs.getState().tabs.some((t) => (isServerTab(t) || isLoadTestTab(t) || isScenarioTab(t) || isVariablesTab(t) || (isRequestTab(t) && t.path)) && isDirty(t))) e.preventDefault();
     };
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
@@ -294,6 +310,19 @@ export default function App() {
               <div className="min-h-0 flex-1">
                 <Workbench />
               </div>
+              {consoleOpen && (
+                <>
+                  <Splitter
+                    direction="vertical"
+                    onResize={(d) =>
+                      useUi.setState((s) => ({ consoleHeight: Math.min(Math.round(window.innerHeight * 0.7), Math.max(120, s.consoleHeight - d)) }))
+                    }
+                  />
+                  <div style={{ height: consoleHeight }} className="min-h-0 shrink-0">
+                    <ConsolePanel />
+                  </div>
+                </>
+              )}
             </main>
             {labGuide && <LabGuide />}
           </div>

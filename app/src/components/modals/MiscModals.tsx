@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Cookie, FileJson, Globe, GraduationCap, KeyRound, ListChecks, Search, Terminal, Trash2 } from "lucide-react";
+import { Cookie, FileJson, Globe, GraduationCap, KeyRound, ListChecks, Search, Terminal, Trash2, Workflow } from "lucide-react";
 import type { CatalogImport } from "../../bindings/CatalogImport";
 import type { CookieInfo } from "../../bindings/CookieInfo";
 import type { SpecUpdate } from "../../bindings/SpecUpdate";
@@ -12,20 +12,23 @@ import { copyText, pickFile } from "../../lib/platform";
 import { api, errorMessage, RpcError } from "../../lib/rpc";
 import { confirm } from "../../store/dialogs";
 import { useLoadTests } from "../../store/loadtests";
+import { findScenarioNode, moveScenarioNode, newScenarioPrompt, useScenarios } from "../../store/scenarios";
 import { useServers } from "../../store/servers";
-import { isRequestTab, openDraft, openLoadTest, openRequest, openRunner, openServer, openTool, saveTabAs, useTabs } from "../../store/tabs";
+import { isRequestTab, openDraft, openLoadTest, openRequest, openRunner, openScenario, openServer, openTool, saveTabAs, useTabs } from "../../store/tabs";
 import { formatDuration, MODELS } from "../loadtests/model";
 import { SERVER_KINDS } from "../servers/kinds";
 import { TOOLS } from "../tools/registry";
 import { toast } from "../../store/toasts";
 import { openAcademy } from "../../store/academy";
-import { closeModal, openModal, toggleExpanded, useUi } from "../../store/ui";
+import { showEnvironments } from "../../store/environments";
+import { closeModal, toggleExpanded, useUi } from "../../store/ui";
 import { refreshEnvironments, refreshTree, reloadWorkspace, useWorkspace } from "../../store/workspace";
 import { CodeEditor } from "../CodeEditor";
 import { DocsEditor } from "../DocsEditor";
 import { KeyValueEditor } from "../KeyValueEditor";
 import { CatalogTab } from "../catalog/CatalogTab";
 import { foldersTo } from "../catalog/model";
+import { folderNames, scenarioFolders, scenarioParent } from "../scenarios/model";
 import { AuthEditor } from "../request/AuthEditor";
 import { ScriptsEditor, ScriptsTabLabel } from "../request/ScriptsEditor";
 import { moveItem } from "../sidebar/Sidebar";
@@ -150,7 +153,11 @@ export function ImportModal({ parent: initialParent, tab: initialTab }: { parent
               <Button variant="ghost" onClick={closeModal}>
                 Done
               </Button>
-              <Button variant="primary" icon={<KeyRound size={14} />} onClick={() => openModal({ type: "environments", focus: environment.id })}>
+              <Button variant="primary" icon={<KeyRound size={14} />} onClick={() => {
+                  closeModal();
+                  showEnvironments(environment.id);
+                }}
+              >
                 Add your API key
               </Button>
             </>
@@ -399,6 +406,8 @@ export function ExportModal({ tabId }: { tabId: string }) {
       onClose={closeModal}
       title="Copy as cURL or code"
       width={880}
+      // A column: the panes shrink with a short window, so only the lists inside scroll.
+      bodyClassName="flex flex-col"
       footer={
         <>
           <Button variant="ghost" onClick={closeModal}>
@@ -578,6 +587,57 @@ export function MoveModal({ path, name }: { path: string; name: string }) {
     >
       <Field label="Destination folder" hint={invalid ? "A folder cannot be moved into itself." : undefined}>
         <FolderSelect value={parent} onChange={setParent} />
+      </Field>
+    </Modal>
+  );
+}
+
+/** Move a scenario, or a folder of them, to another folder of scenarios. */
+export function MoveScenarioModal({ id, name, folder }: { id: string; name: string; folder: boolean }) {
+  const tree = useScenarios((s) => s.tree);
+  const options = useMemo(() => scenarioFolders(tree), [tree]);
+  const current = scenarioParent(id);
+  const [parent, setParent] = useState(current);
+  const [busy, setBusy] = useState(false);
+  const invalid = folder && (parent === id || parent.startsWith(`${id}/`));
+  return (
+    <Modal
+      open
+      onClose={closeModal}
+      title={`Move “${name}”`}
+      width={480}
+      footer={
+        <>
+          <Button variant="ghost" onClick={closeModal}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            loading={busy}
+            disabled={invalid || parent === current}
+            onClick={async () => {
+              const node = findScenarioNode(tree, id, folder);
+              setBusy(true);
+              if (node) await moveScenarioNode(node, parent, null);
+              setBusy(false);
+              closeModal();
+            }}
+          >
+            Move
+          </Button>
+        </>
+      }
+    >
+      <Field label="Destination folder" hint={invalid ? "A folder cannot be moved into itself." : undefined}>
+        <Select value={parent} onChange={(e) => setParent(e.target.value)} className="w-full" aria-label="Destination folder">
+          <option value="">Scenarios (top level)</option>
+          {options.map((o) => (
+            <option key={o.id} value={o.id}>
+              {"\u00a0\u00a0".repeat(o.depth + 1)}
+              {o.name}
+            </option>
+          ))}
+        </Select>
       </Field>
     </Modal>
   );
@@ -1040,6 +1100,8 @@ export function CommandPalette() {
   const workspaceName = useWorkspace((s) => s.info?.meta.name ?? "");
   const servers = useServers((s) => s.saved);
   const loadTests = useLoadTests((s) => s.saved);
+  const scenarios = useScenarios((s) => s.saved);
+  const scenarioTree = useScenarios((s) => s.tree);
   const [q, setQ] = useState("");
   const [index, setIndex] = useState(0);
   const list = useRef<HTMLDivElement>(null);
@@ -1053,6 +1115,15 @@ export function CommandPalette() {
         trail: "Runner",
         terms: "runner run collection tests",
         open: () => openRunner("", workspaceName),
+      },
+      {
+        key: "scenario:new",
+        badge: <Workflow size={13} />,
+        color: "var(--accent)",
+        name: "New scenario",
+        trail: "Scenarios",
+        terms: "scenario flow steps chain new create",
+        open: () => void newScenarioPrompt(),
       },
       {
         key: "academy",
@@ -1090,6 +1161,18 @@ export function CommandPalette() {
         terms: "load test",
         open: () => void openLoadTest(n.id),
       })),
+      ...scenarios.map((n) => {
+        const folders = folderNames(n.id, scenarioTree).join(" / ");
+        return {
+          key: `c:${n.id}`,
+          badge: <Workflow size={13} />,
+          color: "var(--accent)",
+          name: n.name,
+          trail: `Scenario${folders ? ` in ${folders}` : ""} · ${n.steps} ${n.steps === 1 ? "step" : "steps"}`,
+          terms: `scenario flow steps ${folders}`,
+          open: () => void openScenario(n.id),
+        };
+      }),
       ...TOOLS.map((t) => ({
         key: `t:${t.id}`,
         badge: t.icon(13),
@@ -1100,7 +1183,7 @@ export function CommandPalette() {
         open: () => openTool(t.id),
       })),
     ],
-    [tree, servers, loadTests, workspaceName],
+    [tree, servers, loadTests, scenarios, scenarioTree, workspaceName],
   );
   const results = useMemo(() => {
     const words = q.toLowerCase().split(/\s+/).filter(Boolean);
@@ -1172,6 +1255,7 @@ export function ShortcutsModal({ mod }: { mod: string }) {
     ["Focus URL", [mod, "L"]],
     ["Next / previous tab", ["Ctrl", "Tab"]],
     ["Environments", [mod, "E"]],
+    ["Show or hide the console", [mod, "J"]],
     ["Settings", [mod, ","]],
     ["Search in editor / response", [mod, "F"]],
     ["Zoom in / out", [mod, "+", "−"]],

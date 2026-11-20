@@ -43,9 +43,14 @@ impl Redactor {
     pub fn new(secrets: &[Variable]) -> Self {
         let mut r = Self::default();
         for v in secrets.iter().filter(|v| v.secret && v.enabled) {
-            r.add(&v.value, &format!("{{{{{}}}}}", v.key.trim()), MIN_SECRET_LEN);
+            r.hide(&v.key, &v.value);
         }
         r
+    }
+
+    /// Also hide `value`, as `{{key}}`.
+    pub fn hide(&mut self, key: &str, value: &str) {
+        self.add(value, &format!("{{{{{}}}}}", key.trim()), MIN_SECRET_LEN);
     }
 
     /// Also hide what these headers carried (e.g. the token of `Authorization: Bearer …`).
@@ -73,6 +78,12 @@ impl Redactor {
 
     pub fn is_empty(&self) -> bool {
         self.rules.is_empty()
+    }
+
+    /// Bytes of the longest value hidden: the end of a text that was cut may hold the start
+    /// of one, which nothing would recognize.
+    pub fn longest(&self) -> usize {
+        self.rules.first().map_or(0, |(value, _)| value.len())
     }
 
     fn add(&mut self, value: &str, replacement: &str, min_len: usize) {
@@ -138,6 +149,14 @@ impl Redactor {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_longest_value_is_known() {
+        assert_eq!(Redactor::default().longest(), 0);
+        let headers = [Header::new("Authorization", "Bearer abcdefghijkl"), Header::new("X-Api-Key", "k3y-value")];
+        let r = Redactor::default().with_headers(&headers);
+        assert_eq!(r.longest(), "Bearer abcdefghijkl".len());
+    }
 
     fn var(key: &str, value: &str, secret: bool) -> Variable {
         Variable { key: key.into(), value: value.into(), enabled: true, secret }

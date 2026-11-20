@@ -6,6 +6,41 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-20
+
+### Added
+- **Folders for scenarios:** keep scenarios organized in folders, and folders in folders, as in the collection (the **+** of the **Scenarios** section, or right-click a folder → **New folder** or **New scenario**). Drag scenarios and folders into a folder or to another place, or use **Move to…**; rename and delete folders by right-clicking them. A scenario in a folder is a file in that folder (`scenarios/Shop/Checkout.yaml`), its id is its path (`Shop/Checkout`), and its tab shows the folders it is in. Steps that run a scenario follow it when it or its folder is renamed or moved, and so do the values its last run left. The **Filter** shows matching scenarios in their folders.
+- **AI agents:** `save_scenario` takes a `folder`, the new `move_scenario` moves or renames a scenario or a folder, `list_scenarios` lists the folders, and `delete_items` deletes folders of scenarios (`scenarioFolders`). A scenario is found by its id when scenarios in different folders have the name.
+- **`zorvik run --scenario`** takes a scenario's path (`--scenario Shop/Checkout`); when scenarios in different folders have the name, it lists their paths.
+
+## [0.5.0] - 2026-11-18
+
+### Added
+- **Scenarios:** run saved requests one after the other as steps, with values passed from one to the next and no scripts needed (the **Scenarios** section of the left rail, or right-click a folder → **New scenario…**). A step saves values of its response as **outputs** (a JSON path, header, cookie, regex, the status or the body; pick one from the step's last response with a click), and later steps use them as `{{name}}` or as **inputs**, which can join several values (`{{userId}}-{{cartId}}`) or work one out with JavaScript (`= Number(total) + 1`). **Checks** on the status, headers, body and JSON values are tests in the results. Steps can branch (**If** / **else if** / **else**), loop (**For each** over a list, **Repeat** a number of times or until a condition holds), run **at the same time**, **Set values**, **Wait**, **Stop**, run a **Script**, **Ask for a value** (a one-time code) and **Run** another **scenario** (a shared login). The same request can be a step as often as needed; a failed step can be tried again; steps under **Always at the end** clean up whatever happened. **Run to here** and **Run only this step** build a scenario one step at a time. A data file runs it once per row.
+- **A scenario's values are its own:** its variables, what its steps save and what its scripts set (also with `pm.environment.set`) stay in the scenario. The environment, workspace variables and globals are read, never changed, so a request sent on its own afterwards behaves as before. **Variables** shows the values the last run left and clears them; they are kept in memory only.
+- **Scenarios everywhere:** each scenario has docs, is a plain file under `scenarios/` in the workspace, runs in CI with `zorvik run <workspace> --scenario <name>` (JSON and JUnit reports as for collection runs), and AI agents list, read, save and run them with `list_scenarios`, `read_scenario`, `save_scenario` and `run_scenario` (also up to a step, or one step). Renaming or moving a request updates the scenarios that use it.
+- **Collection runner:** **Save as a scenario** turns the chosen requests, in their order, into a scenario.
+
+### Changed
+- **Environments in the sidebar:** environments, the workspace's variables and globals have their own section in the left rail, and each opens in a tab like a request, instead of the **Environments & variables** dialog. The check mark before an environment makes it the active one; a tab has **Set active**, **Duplicate**, **Delete** and saves with <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>S</kbd>. The picker in the title bar still switches the active environment, and its **Manage environments…** (or <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>E</kbd>) opens the section with the active environment.
+- **The left rail is in groups:** Collection and Environments; Scenarios, Load tests and Servers; History and Tools; AI agents and Docs.
+
+## [0.4.0] - 2026-11-17
+
+### Added
+- **Console:** every request Zorvik sends is logged in a console under the open tab (the **Console** button at the foot of the left rail, or <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>J</kbd>): requests from tabs, collection runs and AI agents, the requests scripts make with `pm.sendRequest`, OAuth 2.0 token requests, and connections opening and closing (WebSocket, Socket.IO, SSE, TCP, UDP, MQTT, gRPC, MCP, DNS). Open a line to see the headers and body that went out and came back, the address, TLS, redirects and timing. A request that failed shows why, with the request that was prepared for it. What scripts write with `console.log` shows between the requests, in the order it happened and while the script still runs. Filter by requests, logs or errors and by text; a red number on the button counts what failed while the console was closed. The console is kept in memory only (the newest 5000 lines), shows values as they were sent, and is cleared when another workspace opens.
+- **`read_console` for AI agents:** agents read the console to see why a request failed, with secret values and credential headers hidden, and token requests without their headers and bodies.
+
+### Removed
+- **Nightly builds and the Nightly update channel.** Zorvik is released as versions only; **Settings → Updates** no longer has a **Channel**.
+
+### Fixed
+- **Windows: an update no longer stops at "Error opening file for writing" for `zorvik.exe`.** The command line was often still running when the installer wanted to replace it (an AI agent's `zorvik mcp`, a `zorvik serve` in a terminal). The installer now moves a running `zorvik.exe` aside: those programs carry on, and the update installs.
+- **Settings, Environments and Copy as cURL or code scroll in one place.** In a short window these dialogs showed two scrollbars, one for the dialog and one for the open section; now the panes fit the window and only the section scrolls.
+
+### Security
+- Dependencies updated, including the fixes in undici 8.12, Hono 4.13.16 and `@hono/node-server` 2.1.6, fast-uri 3.1.9, body-parser, qs and zod (used by the test and build tools) and Astro 7.4.12 (the website); Tauri 2.12.5 and its plugins, Tokio 1.54, React 19.3.1, Vite 8.3.8 and others.
+
 ## [0.3.2] - 2026-11-10
 
 > 中文版（fork）自己的版本号：上游对应的是 0.3.1，这里只是为了发布带汉化的安装包。
@@ -205,7 +240,10 @@ The first public release.
 - In-app docs, light and dark themes, zoom and font settings.
 - Installers for Windows, macOS (universal) and Linux (deb, rpm, AppImage).
 
-[Unreleased]: https://github.com/LibreGuild/zorvik/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/LibreGuild/zorvik/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/LibreGuild/zorvik/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/LibreGuild/zorvik/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/LibreGuild/zorvik/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/LibreGuild/zorvik/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/LibreGuild/zorvik/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/LibreGuild/zorvik/compare/v0.2.0...v0.2.1

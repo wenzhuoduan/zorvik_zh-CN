@@ -3,7 +3,6 @@ import { create } from "zustand";
 export type ModalState =
   | { type: "none" }
   | { type: "settings" }
-  | { type: "environments"; focus?: string }
   | { type: "import"; parent?: string; /** The tab to open on (File by default). */ tab?: "catalog" }
   | { type: "cookies" }
   | { type: "workspaceSettings" }
@@ -12,10 +11,12 @@ export type ModalState =
   | { type: "export"; tabId: string }
   | { type: "saveAs"; tabId: string }
   | { type: "move"; path: string; name: string }
+  /** A scenario, or a folder of them (`folder`), to another folder of scenarios. */
+  | { type: "moveScenario"; id: string; name: string; folder: boolean }
   | { type: "palette" }
   | { type: "shortcuts" };
 
-export type SidebarSection = "collection" | "loadtests" | "servers" | "tools" | "history" | "agents" | "docs";
+export type SidebarSection = "collection" | "environments" | "scenarios" | "loadtests" | "servers" | "history" | "tools" | "agents" | "docs";
 
 interface UiState {
   modal: ModalState;
@@ -26,8 +27,11 @@ interface UiState {
   layout: "stacked" | "side";
   /** Fraction of a server tab given to its settings (the rest shows traffic). */
   serverSplit: number;
-  /** Fraction of a load test tab given to its settings (the rest shows results). */
+  /** Fraction of a load test, runner or scenario tab given to its settings (the rest shows results). */
   loadSplit: number;
+  /** The console is shown under the open tab, this many pixels high. */
+  consoleOpen: boolean;
+  consoleHeight: number;
   expanded: Record<string, boolean>;
 }
 
@@ -51,13 +55,18 @@ export const useUi = create<UiState>(() => ({
   layout: saved.layout ?? "side",
   serverSplit: saved.serverSplit ?? 0.5,
   loadSplit: saved.loadSplit ?? 0.42,
+  consoleOpen: saved.consoleOpen ?? false,
+  consoleHeight: saved.consoleHeight ?? 260,
   expanded: saved.expanded ?? {},
 }));
 
 useUi.subscribe((s) => {
   try {
-    const { sidebarTab, sidebarWidth, split, layout, serverSplit, loadSplit, expanded } = s;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ sidebarTab, sidebarWidth, split, layout, serverSplit, loadSplit, expanded }));
+    const { sidebarTab, sidebarWidth, split, layout, serverSplit, loadSplit, consoleOpen, consoleHeight, expanded } = s;
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ sidebarTab, sidebarWidth, split, layout, serverSplit, loadSplit, consoleOpen, consoleHeight, expanded }),
+    );
   } catch {
     /* storage unavailable */
   }

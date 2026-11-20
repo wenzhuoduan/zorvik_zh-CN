@@ -14,7 +14,7 @@ import { api, errorMessage } from "../lib/rpc";
 import { activeLocale } from "../i18n/config";
 import { confirm } from "./dialogs";
 import { refreshRunning, refreshServers } from "./servers";
-import { resetTabs, restoreTabs } from "./tabs";
+import { leaveTabs, resetTabs, restoreTabs } from "./tabs";
 import { toast } from "./toasts";
 import { openWorkspace, refreshEnvironments, refreshTree, reloadWorkspace, useWorkspace } from "./workspace";
 
@@ -132,6 +132,7 @@ export async function enterBootcamp(): Promise<boolean> {
     set({ bootcampPath: path });
   }
   if (useWorkspace.getState().info?.path === path) return true;
+  if (!(await leaveTabs())) return false;
   resetTabs();
   try {
     await openWorkspace(path);

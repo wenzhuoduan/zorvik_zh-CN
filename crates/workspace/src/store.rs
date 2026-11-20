@@ -6,6 +6,7 @@
 //! <root>/requests/**            folders (with optional _folder.yaml) and request files (*.yaml)
 //! <root>/servers/*.yaml         servers (mock HTTP, WebSocket, TCP, UDP, DNS, …)
 //! <root>/loadtests/*.yaml       load tests
+//! <root>/scenarios/**          folders (with optional _folder.yaml) and scenarios (*.yaml)
 //! ```
 //!
 //! Item paths in the API are relative to `requests/` and use `/` separators.
@@ -30,11 +31,12 @@ pub const REQUESTS_DIR: &str = "requests";
 pub const ENV_DIR: &str = "environments";
 pub const SERVERS_DIR: &str = "servers";
 pub const LOAD_TESTS_DIR: &str = "loadtests";
+pub const SCENARIOS_DIR: &str = "scenarios";
 pub const FOLDER_FILE: &str = "_folder.yaml";
-const EXT: &str = ".yaml";
+pub(crate) const EXT: &str = ".yaml";
 /// Folder levels shown in the tree. Deeper content (e.g. from a hostile repo)
 /// is left out: the recursive walk would overflow the stack and crash the app.
-const MAX_TREE_DEPTH: usize = 32;
+pub(crate) const MAX_TREE_DEPTH: usize = 32;
 
 #[derive(Debug, Clone, Serialize, TS)]
 #[serde(rename_all = "camelCase")]
@@ -593,6 +595,7 @@ impl Workspace {
     }
 
     // ---- servers and load tests (flat folders of named YAML files) -------------
+    // Scenarios, which have folders, are in `scenarios.rs`.
 
     fn flat_dir<T: FlatItem>(&self) -> PathBuf {
         self.root.join(T::DIR)
@@ -915,7 +918,7 @@ impl Workspace {
     }
 }
 
-fn read_folder_meta(dir: &Path) -> Result<FolderMeta> {
+pub(crate) fn read_folder_meta(dir: &Path) -> Result<FolderMeta> {
     let file = dir.join(FOLDER_FILE);
     if is_symlink(&file) {
         return Err(Error::invalid(format!("{} is a symbolic link, which is not followed", file.display())));
@@ -957,7 +960,7 @@ fn valid_id(id: &str) -> bool {
 
 /// One `/`-separated part of an item path: a plain name that cannot climb out
 /// of its folder or, on Windows, alias another file or a device.
-fn valid_path_part(part: &str) -> bool {
+pub(crate) fn valid_path_part(part: &str) -> bool {
     let plain = matches!(Path::new(part).components().collect::<Vec<_>>().as_slice(), [Component::Normal(_)]);
     let windows_alias = cfg!(windows) && (part.contains(':') || part.ends_with(['.', ' ']) || is_reserved_name(part));
     plain && !part.contains('\\') && !part.trim_matches(['.', ' ']).is_empty() && !windows_alias
@@ -969,7 +972,7 @@ fn is_request_file(path: &Path) -> bool {
     name.len() > EXT.len() && name.to_ascii_lowercase().ends_with(EXT) && !name.eq_ignore_ascii_case(FOLDER_FILE)
 }
 
-fn rename_path(from: &Path, to: &Path) -> Result<()> {
+pub(crate) fn rename_path(from: &Path, to: &Path) -> Result<()> {
     if from == to {
         return Ok(());
     }
@@ -1008,7 +1011,7 @@ fn imported_name(name: &str, fallback: &str) -> String {
     format!("{}…", cut.trim_end_matches([' ', ',', '.', ';', ':', '-']))
 }
 
-fn validate_name(name: &str) -> Result<()> {
+pub(crate) fn validate_name(name: &str) -> Result<()> {
     if name.trim().is_empty() {
         return Err(Error::invalid("Name cannot be empty"));
     }

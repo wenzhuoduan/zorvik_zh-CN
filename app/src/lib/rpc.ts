@@ -14,6 +14,8 @@ import type { AutoStartResult } from "../bindings/AutoStartResult";
 import type { CatalogEntry } from "../bindings/CatalogEntry";
 import type { CatalogImport } from "../bindings/CatalogImport";
 import type { CatalogPreview } from "../bindings/CatalogPreview";
+import type { ConsoleDetails } from "../bindings/ConsoleDetails";
+import type { ConsoleLine } from "../bindings/ConsoleLine";
 import type { Auth } from "../bindings/Auth";
 import type { CookieInfo } from "../bindings/CookieInfo";
 import type { CurlFlavor } from "../bindings/CurlFlavor";
@@ -51,6 +53,9 @@ import type { Request } from "../bindings/Request";
 import type { RunningServerInfo } from "../bindings/RunningServerInfo";
 import type { RunDetails } from "../bindings/RunDetails";
 import type { RunStarted } from "../bindings/RunStarted";
+import type { Scenario } from "../bindings/Scenario";
+import type { ScenarioNode } from "../bindings/ScenarioNode";
+import type { ScenarioValue } from "../bindings/ScenarioValue";
 import type { SendResult } from "../bindings/SendResult";
 import type { Server } from "../bindings/Server";
 import type { ServerNode } from "../bindings/ServerNode";
@@ -275,6 +280,38 @@ export const api = {
   exportRun: (runId: string, path: string, format: "json" | "junit") => call<null>("runner.export", { runId, path, format }),
   /** What a result sent and got (null once the app no longer keeps it). */
   runDetails: (runId: string, seq: number) => call<RunDetails | null>("runner.details", { runId, seq }),
+
+  /** The scenarios and their folders, as a tree. */
+  scenarios: () => call<ScenarioNode[]>("scenario.list"),
+  readScenario: (id: string) => call<Scenario>("scenario.read", { id }),
+  createScenario: (scenario: Scenario, folder = "") => call<string>("scenario.create", { scenario, folder }),
+  saveScenario: (id: string, scenario: Scenario) => call<string>("scenario.save", { id, scenario }),
+  duplicateScenario: (id: string) => call<string>("scenario.duplicate", { id }),
+  deleteScenario: (id: string) => call<null>("scenario.delete", { id }),
+  createScenarioFolder: (parent: string, name: string) => call<string>("scenario.createFolder", { parent, name }),
+  renameScenarioFolder: (id: string, name: string) => call<string>("scenario.renameFolder", { id, name }),
+  deleteScenarioFolder: (id: string) => call<null>("scenario.deleteFolder", { id }),
+  /** Move a scenario or a folder (`folder`) into `parent` at `index` (last: null); returns its new id. */
+  moveScenario: (id: string, folder: boolean, parent: string, index: number | null) =>
+    call<string>("scenario.move", { id, folder, parent, index }),
+  /**
+   * Run a scenario as edited (`scenario`): all of it, up to and including the step at `to`, or
+   * `only` that step with the values the last run left. Events `runner {runId}`; stop with `stopRun`.
+   */
+  runScenario: (id: string, scenario: Scenario, part: { to?: string; only?: string } = {}) =>
+    call<RunStarted>("scenario.run", { id, scenario, ...part }),
+  /** The value an "ask" step of a run waits for (null: none, the step fails). */
+  answerScenario: (runId: string, value: string | null) => call<null>("scenario.answer", { runId, value }),
+  /** The values the last run of a scenario left (kept in memory, secret ones hidden). */
+  scenarioValues: (id: string) => call<ScenarioValue[]>("scenario.values", { id }),
+  /** Forget them: all, or the one named `key`. */
+  clearScenarioValues: (id: string, key?: string) => call<null>("scenario.clearValues", { id, key }),
+
+  /** The console's lines, oldest first (new ones come as `console` events). */
+  consoleList: () => call<ConsoleLine[]>("console.list"),
+  /** What a console request sent and got (null once the app no longer keeps it). */
+  consoleDetails: (id: number) => call<ConsoleDetails | null>("console.details", { id }),
+  consoleClear: () => call<null>("console.clear"),
 
   /** Generic call for feature modules (DNS, tools) that own their method names. */
   call: <T>(method: string, params: unknown = {}) => call<T>(method, params),
