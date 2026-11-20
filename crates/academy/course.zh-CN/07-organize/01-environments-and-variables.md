@@ -32,29 +32,29 @@ lab:
             body: '{"environment": "staging", "version": "2.0.3", "healthy": true}'
   steps:
     - text: |
-        按 **⌘/Ctrl + E** 打开 **环境与变量**。点 *环境* 旁边的 **+**，把新环境改名为 **Dev**，加一个变量：`baseUrl`，值是这个 Dev 服务器的地址 `{{=dev}}`。然后点 **保存修改**。
+        按 **⌘/Ctrl + E** 让**环境**显示在左侧栏。点左侧栏顶部的 **+**：新环境会在标签页里打开。把它改名为 **Dev**，加一个变量：`baseUrl`，值是这个 Dev 服务器的地址 `{{=dev}}`，然后用 **⌘/Ctrl + S** 保存。
       hints:
         - 环境就是一份有名字的变量清单。Dev 只需要一个，叫 baseUrl。
-        - "在弹窗里点「环境」旁边的 +，在顶部的名字框里输入 Dev，然后在「变量」列输 baseUrl、在「值」列输地址。"
-        - "值就是地址本身，以 http://127.0.0.1: 开头，结尾不要斜杠。它不是变量：Dev 一旦启用，Lab 环境就关掉了。然后点保存修改。"
+        - "在左侧栏点顶部的 +，在新标签页顶部的名字框里输入 Dev，然后在「变量」列输 baseUrl、在「值」列输地址。"
+        - "值就是地址本身，以 http://127.0.0.1: 开头，结尾不要斜杠。它不是变量：Dev 一旦启用，Lab 环境就关掉了。然后按 ⌘/Ctrl + S 保存。"
       check:
         saved:
           environment: { name: Dev, variables: [{ key: baseUrl, value: "{{dev}}*" }] }
       solution:
         - call: { method: env.create, params: { environment: { name: Dev, variables: [{ key: baseUrl, value: "{{dev}}" }] } } }
         - call: { method: env.save, params: { id: Dev, environment: { name: Dev, variables: [{ key: baseUrl, value: "{{dev}}" }] } } }
-    - text: 弹窗里选中 **Dev** 时，点 **Duplicate**（复制）。把副本改名为 **Staging**，把它的 `baseUrl` 改成 Staging 服务器的地址 `{{=staging}}`，然后保存。
+    - text: 在 **Dev** 标签页里点 **Duplicate**（复制）。副本会在自己的标签页里打开。把它改名为 **Staging**，把它的 `baseUrl` 改成 Staging 服务器的地址 `{{=staging}}`，然后用 **⌘/Ctrl + S** 保存。
       hints:
         - 复制会把所有变量一起带过来，你只改不一样的地方。
-        - 复制按钮在弹窗右上角，删除按钮旁边。副本叫「Dev copy」。
-        - "把「Dev copy」改名为 Staging，把 baseUrl 设成上一步给出的 Staging 地址（同一个主机，不同端口），然后保存修改。"
+        - 复制按钮在 Dev 标签页右上角、删除按钮旁边（Dev 在左侧栏那一行的菜单里也有）。副本叫「Dev copy」。
+        - "把「Dev copy」改名为 Staging，把 baseUrl 设成上一步给出的 Staging 地址（同一个主机，不同端口），然后按 ⌘/Ctrl + S。"
       check:
         saved:
           environment: { name: Staging, variables: [{ key: baseUrl, value: "{{staging}}*" }] }
       solution:
         - call: { method: env.create, params: { environment: { name: Staging, variables: [{ key: baseUrl, value: "{{staging}}" }] } } }
         - call: { method: env.save, params: { id: Staging, environment: { name: Staging, variables: [{ key: baseUrl, value: "{{staging}}" }] } } }
-    - text: 关掉弹窗。在窗口右上角的环境菜单里选 **Dev**，然后新建一个请求（**⌘/Ctrl + N**），发送 `GET {{baseUrl}}/status`。
+    - text: 让 **Dev** 成为活动环境（在窗口右上角的环境菜单里选它，或在它的标签页里点 **Set active**（设为活动）），然后新建一个请求（**⌘/Ctrl + N**），发送 `GET {{baseUrl}}/status`。
       hints:
         - 环境菜单显示当前启用的环境名（现在写的是 Lab）。
         - 点它，选 Dev，然后按 ⌘N，在地址栏输入 {{baseUrl}}/status。把鼠标停在 {{baseUrl}} 上就能看到它的值。
@@ -124,7 +124,7 @@ GET baseUrl/status -[启用 Staging]-> Staging 服务器
 
 ## 变量放在哪里
 
-用 **⌘/Ctrl + E** 打开 **环境与变量**：
+在左侧栏打开**环境**，或按 **⌘/Ctrl + E**。左侧栏会列出所有环境，每个都在标签页里打开：
 
 - **环境** 存放每台服务器不同的值，比如 `baseUrl` 或测试账号的 id。
 - **工作区变量** 由所有环境共享，比如一个 API 版本号。

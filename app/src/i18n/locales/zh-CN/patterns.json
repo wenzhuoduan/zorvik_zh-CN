@@ -1178,5 +1178,97 @@
   {
     "pattern": "^Security scheme \"(.+)\" \\((.+)\\) is not supported; set up auth manually$",
     "replacement": "不支持安全方案“{0}”（{1}）；请手动配置鉴权"
+  },
+  {
+    "pattern": "^(\\d+) failed since the console was open$",
+    "replacement": "控制台打开后有 {0} 个失败"
+  },
+  {
+    "pattern": "^(.+) is active\\. Use no environment$",
+    "replacement": "{0} 是活动环境。点击可不用任何环境"
+  },
+  {
+    "pattern": "^Set (.+) active$",
+    "replacement": "把 {0} 设为活动"
+  },
+  {
+    "pattern": "^Nothing matches “(.+)”\\.$",
+    "replacement": "没有匹配“{0}”的内容。"
+  },
+  {
+    "pattern": "^An output: a variable name has no spaces or braces$",
+    "replacement": "输出：变量名不能含空格和花括号"
+  },
+  {
+    "pattern": "^An output: give the variable a name$",
+    "replacement": "输出：请给变量起个名字"
+  },
+  {
+    "pattern": "^An output: give the (.+)$",
+    "replacement": "输出：请填写{0}"
+  },
+  {
+    "pattern": "^Give the (.+)$",
+    "replacement": "请填写{0}"
+  },
+  {
+    "pattern": "^Repeat until (.+)$",
+    "replacement": "重复直到 {0}"
+  },
+  {
+    "pattern": "^Repeat (\\d+) times?$",
+    "replacement": "重复 {0} 次"
+  },
+  {
+    "pattern": "^For each (.+) in (.+)$",
+    "replacement": "在 {1} 上逐项循环：{0}"
+  },
+  {
+    "pattern": "^Wait (\\d+) ms$",
+    "replacement": "等待 {0} ms"
+  },
+  {
+    "pattern": "^Ask for (.+)$",
+    "replacement": "询问 {0}"
+  },
+  {
+    "pattern": "^Else if (\\d+) rule$",
+    "replacement": "否则如果 {0} 的规则"
+  },
+  {
+    "pattern": "^Else if (.+)$",
+    "replacement": "否则如果 {0}"
+  },
+  {
+    "pattern": "^Actions of (.+)$",
+    "replacement": "{0} 的操作"
+  },
+  {
+    "pattern": "^Name of (.+)$",
+    "replacement": "{0} 的名称"
+  },
+  {
+    "pattern": "^Output (\\d+) of (.+): variable$",
+    "replacement": "{1} 的第 {0} 个输出：变量"
+  },
+  {
+    "pattern": "^Output (\\d+) of (.+): from$",
+    "replacement": "{1} 的第 {0} 个输出：来源"
+  },
+  {
+    "pattern": "^Use check (\\d+) of (.+)$",
+    "replacement": "使用 {1} 的第 {0} 个检查"
+  },
+  {
+    "pattern": "^Check (\\d+) of (.+): from$",
+    "replacement": "{1} 的第 {0} 个检查：来源"
+  },
+  {
+    "pattern": "^Check (\\d+) of (.+): comparison$",
+    "replacement": "{1} 的第 {0} 个检查：比较方式"
+  },
+  {
+    "pattern": "^Check (\\d+) of (.+): value$",
+    "replacement": "{1} 的第 {0} 个检查：值"
   }
 ]

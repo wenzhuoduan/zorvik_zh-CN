@@ -3,5 +3,6 @@
   "Peak (users)",
   "Peak (req/s)",
   "Target (users)",
-  "Target (req/s)"
+  "Target (req/s)",
+  "Paths inside the workspace are saved relative to it, so the request works for everyone who opens the workspace. Files outside the workspace need Settings → Data & privacy → allow files outside the workspace. Well-known types ("
 ]

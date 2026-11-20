@@ -3,19 +3,20 @@
 > 这是**唯一**的任务队列。新会话从这里挑一项开始，做完立刻回来勾掉并更新数字。
 > 架构与规则见 `i18n/README.md`；执行流程见 `.codebuddy/skills/zorvik-zh-cn-localization/SKILL.md`。
 
-## 当前状态（2026-11-10 收尾）
+## 当前状态（2026-11-20 合并上游 0.5.1 后）
 
 | 指标 | 值 | 怎么复测 |
 |---|---|---|
-| 界面词典 | 2774 条 + 295 条模板 | `node i18n/tools/extract.mjs` |
-| 界面覆盖率 | 91.7%（2054 条候选，未译 170） | 同上；更准的缺口看 `node i18n/tools/audit.mjs`（281 条，均为字体/协议名/示例值/代码片段） |
-| Rust 侧文案 | 已覆盖常用提示，剩余 1310 条 | `node i18n/tools/rust.mjs`（多为内部错误与测试夹具） |
-| 应用内文档 | 100%（247 处字符串） | `node i18n/tools/docs-zh.mjs` |
+| 版本 | 0.5.1（上游 0.5.1，中文 fork 自己还没有独立版本号） | `git log -1`、`Cargo.toml` |
+| 界面词典 | 3017 条 + 318 条模板 | `node i18n/tools/extract.mjs` |
+| 界面覆盖率 | 91.6%（2231 条候选，未译 187） | 同上；未译的都是代码残片/协议名/示例值，`audit.mjs` 抓到的对象字段本轮已补 75 条 |
+| Rust 侧文案 | 已覆盖常用提示，剩余 1380 条 | `node i18n/tools/rust.mjs`（新增多在 `crates/api/src/agents/**`，MCP 工具描述按术语表不译） |
+| 应用内文档 | 100%（271 处字符串；19 处"仍英文"是 `docs-*` 图片 id 与 `mod+Enter`） | `node i18n/tools/docs-zh.mjs` |
 | 课程 | **97 / 97 个文件（100%）** | `node i18n/tools/course.mjs` |
-| 验证基线 | tsc / vite build / vitest 452 / cargo test -p zorvik-academy 14 / e2e 73（英文模式） | 见 README 第 5 节 |
+| 验证基线 | tsc ✅ / vite build ✅ / vitest **489** ✅ / `check.mjs` ✅；`cargo test -p zorvik-academy` **待开代理补跑** | 见 README 第 5 节 |
 | 语言开关 | 顶栏「中 / EN」即时切换，记忆在 `zorvik.locale` | 实机点一下即可；`VITE_ZORVIK_LOCALE` 钉死时按钮隐藏 |
 
-最近完成：P0 骨架 → P1–P3 界面与文档全扫 → P6 实机走查 → P7 文档整篇替换 → P4 课程机制 + `00-welcome` 到 `16-capstone`（16 个单元，97 / 97 个文件）→ P5 原生层前端 → P9 长尾字段 → P8 英文 e2e 回归 → P10 整体复查（术语纠偏 + 学院页补全 + 动态拼接句）→ P11 新建负载测试/服务器场景清理（新审计工具 `audit.mjs`/`lookup.mjs`）→ **P12 折叠区与 Rust 侧文案（审计器补三个盲区，`rust.mjs` 首轮 1424 → 1310）**。
+最近完成：P0 骨架 → P1–P3 界面与文档全扫 → P6 实机走查 → P7 文档整篇替换 → P4 课程机制 + `00-welcome` 到 `16-capstone`（16 个单元，97 / 97 个文件）→ P5 原生层前端 → P9 长尾字段 → P8 英文 e2e 回归 → P10 整体复查（术语纠偏 + 学院页补全 + 动态拼接句）→ P11 新建负载测试/服务器场景清理（新审计工具 `audit.mjs`/`lookup.mjs`）→ P12 折叠区与 Rust 侧文案（1424 → 1310）→ P13 语言开关 → P14 出 0.3.2 包 → **P15 合并上游 0.5.1：场景 / 控制台 / 环境侧栏三块新特性全部汉化（2774 → 3017 条 + 318 模板、课程 4 个文件同步、21 条过期条目清理、vitest 489）**。
 
 ## 队列（从上往下做，一次一项）
 
@@ -66,8 +67,10 @@
 - [x] P12 折叠区（匹配条件/应答序列/故障注入/工具页）+ Rust 侧首批 114 条（1424 → 1310）
 - [x] P13 顶栏「中 / EN」语言开关（可逆 DOM 翻译 + 文档跟随 + 记忆），vitest 448 → 452
 - [x] P14 版本 0.3.2 + 本地 NSIS 安装包与绿色版；要发 GitHub Release 就打 `zh-v0.3.2` 标签
-- [ ] 继续补 Rust 侧剩余 1310 条：优先 `crates/workspace`（文件/YAML/Git 报错）与 `crates/engine`（请求失败原因），`node i18n/tools/rust.mjs` 按目录分批；`#[cfg(test)]` 里的夹具跳过
-- [ ] 剩余 176 条未译里，绝大多数是格式名、协议名、语言名与静态扫描误抓的代码片段（`HTTP/3`、`Kotlin`、`) : sse ? (`），可翻整句已基本清完；后续写新功能或合并上游后按 `--missing` 抽查即可
+- [ ] **先补跑 `cargo test -p zorvik-academy`**：本轮合并后上游抬了依赖（`brotli-decompressor` 6.3.2 等），本机代理 `127.0.0.1:7890` 没开时在线/`--offline` 都取不到包。开代理后跑一次，确认 `course.zh-CN` 的 4 个改动文件能过解析（`node i18n/tools/course.mjs` 已无 YAML 告警）
+- [ ] 继续补 Rust 侧剩余 1380 条：优先 `crates/workspace`（文件/YAML/Git 报错）与 `crates/engine`（请求失败原因），`node i18n/tools/rust.mjs` 按目录分批；`#[cfg(test)]` 里的夹具与 `crates/api/src/agents/**` 的 MCP 工具描述跳过
+- [ ] 剩余 187 条未译里，绝大多数是格式名、协议名、语言名与静态扫描误抓的代码片段（`HTTP/3`、`Kotlin`、`) : sse ? (`），可翻整句已基本清完；后续写新功能或合并上游后按 `--missing` 抽查即可
+- [ ] 场景/控制台这两块新界面**还没做实机走查**（本轮只做了静态扫描 + `audit.mjs` + `literals` 逐字面量核对）。建议开 Vite + devbridge 走一遍「新建场景 → 加步骤 → 运行 → 看控制台 → 环境侧栏」，重点看折叠区与 aria 之外的可见文案
 - [ ] 已知故意保留英文：`Body` / `Headers` / `XP` / 段位与徽章以外的 HTTP 状态名 / canvas 结业证书 / macOS 菜单。新增文案时别"顺手"把它们译了
 
 **做法**：`node i18n/tools/extract.mjs --missing 200`，先 grep 掉代码特征行（`=>`、`?`、以标点开头），再逐个确认上下文，避免把多义词（如 `Headers`、`OK`）误翻到别的界面。

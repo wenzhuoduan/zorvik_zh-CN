@@ -480,6 +480,18 @@ $env:VITE_ZORVIK_LOCALE="en"; npm run e2e
 | ~~P8~~ | ~~`npm run e2e` 英文回归~~ | 已完成 | Chromium 1243 已装；73 passed，0 失败 |
 | ~~P9~~ | ~~服务器 / 负载测试编辑器逐字段走查~~ | 已完成 | 覆盖率 91.2%；剩余 180 条多为格式名、语言名与扫描误抓的代码片段 |
 
+**2026-11-20　P15 合并上游 0.5.1（场景 / 控制台 / 环境侧栏）**
+
+- `git merge upstream/main` 一次合入 0.4.0、0.5.0、0.5.1（198 个文件、+17.8k 行）。冲突 6 个：`CHANGELOG.md`（保留中文 0.3.2 一节，上游三节照抄）、`Cargo.toml`、`Cargo.lock`、`app/package.json`、`app/package-lock.json`、`app/src-tauri/tauri.conf.json`（我方只改过版本号，全取上游），版本就地升到 **0.5.1**。
+- 挂载点：`node i18n/hooks/apply.mjs` 全绿——`main.tsx` 的 `initI18n()`、`DocsList/DocsView` 的 `../../i18n/docs`、`build.rs` 的 `course.zh-CN` 与 `lib.rs` 的 `COURSE_FILES_ZH` 都没被上游冲掉。
+- 界面：候选 2054 → **2231**（上游新增 177 条候选），补了 177 条精确条目 + 23 条模板（场景步骤标题 `For each X in Y`/`Repeat N times`/`Wait N ms`、输出与检查的 aria 标签、控制台、环境侧栏、`An output: …` 一类错误句），词典 **2774 → 3017 条**、模板 **295 → 318 条**；未译 187 条全是代码残片、协议名与示例值。`audit.mjs` 抓出的对象字段（`about:`、`words:`、空状态长句）与其它静态扫描盲区另补 75 条。
+- 文档：`docs-zh.mjs` 重生成，替换 **271 处**，仍英文 19 处全是 `docs-*` 图片 id 与 `mod+Enter` 标记。**抓取器盲区**：`catalog.mjs` 的 `DOC_SOURCE` 会把 `"Short"` 这类短于 12 字符的字符串后面的引号吃掉，紧跟着的长句因此漏扫——这次手工补了 6 条（场景 tagline/intro、workspace 段落等），改的时候按 `docs-zh.mjs` 打印的"仍为英文"清单抄键最稳。
+- 课程：上游只动 4 个文件（`07-organize/01`、`07-organize/02`、`08-testing/02`、`14-automate/01`），全是「环境与变量弹窗 → 环境侧栏标签页 + ⌘/Ctrl+S」的措辞变化，中文镜像已同步；`course.mjs` 仍 97/97，无 YAML 告警。
+- 词典清理：删掉 21 条上游已移除的文案（夜间构建、更新通道、`Save changes`、`Discard changes?`、旧的环境弹窗拆句等）；`Paths inside the workspace …` 因源码里写的是 `Data &amp; privacy` 被误判为过期，登记进 `i18n/stale-allow.json`。
+- 验证：`npx tsc -b` 通过、`npx vite build` 通过、`npx vitest run` **489 通过**（448 → 489，上游新增 41 个用例）、`check.mjs` 通过。`cargo test -p zorvik-academy` **未跑通**：上游抬了依赖（`brotli-decompressor` 6.3.2 等），本机代理 `127.0.0.1:7890` 没开，在线与 `--offline` 都取不到包，开代理后补跑。
+- 另一处坑：`npx vitest run` 会被环境里的 safe-delete 拦截（清理 `.vitest-cache.tmp-*` 时一次删 600+ 个文件超阈值）。把那个临时目录 `Move-Item` 到 `$env:TEMP` 就能跑。
+- 遗留：Rust 侧未覆盖 1310 → **1380**（新增多在 `crates/api/src/agents/**`，MCP 工具描述按术语表不译）。
+
 ## 8. 环境记录（本机）
 
 - 工具链：Rust 1.99.1、Node 24.22.1、npm 11.19.1（满足 `rust-version = 1.90`、Node 22+）。
