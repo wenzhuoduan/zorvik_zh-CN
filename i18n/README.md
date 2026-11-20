@@ -507,6 +507,8 @@ $env:VITE_ZORVIK_LOCALE="en"; npm run e2e
 - **分支**：`main` 只做上游镜像（合并上游后快进），汉化工作全在长期分支 `i18n/zh-CN` 上（原来叫 `i18n/zh-cn`，2026-11-11 改成大写，旧分支已删）。将来若要给上游提 PR，从 `main` 另开单功能分支（如 `i18n/engine`），一个 PR 一个主题。
 - **署名**：提交信息统一带 `Co-authored-by: DeepSeek <noreply@deepseek.com>`，由本机 `.git/hooks/prepare-commit-msg` 自动追加（合并提交除外）。GitHub 的 Contributors 只统计"邮箱已绑定到账号"的作者/共同作者，所以想让 DeepSeek 出现在贡献者列表里，得有一个 GitHub 账号把该邮箱加上；否则 trailer 只出现在提交信息里。
 - **发布**：`.github/workflows/release-zh.yml` 监听 `zh-v*` 标签（`zh-v0.3.1` 这类），在 `windows-latest` 上出 NSIS 安装包 + 绿色版并**直接发布** Release；也可在 Actions 页面手动跑（只上传产物）。它不动上游 `ci.yml`，也不需要 `release` environment 的更新签名密钥——因此产出的包不含自动更新签名。
+- **上游工作流在 fork 里一律禁用**：`CI`、`Website`、`API catalog` 三个上游工作流在 fork 的 Actions 页面设为 **Disabled**（Actions → 选中工作流 → 右上 `…` → Disable workflow）。原因：GitHub 的 "Sync fork" 会把上游 `main` 快进/合并进本仓库，从而触发 `push: branches: [main]` 的整套 CI（Linux 的 fmt/clippy/test、三平台构建、Pages 预览），而 `main` 在本仓库只是镜像，跑这些纯属浪费额度。禁用是**仓库设置层**的开关，不碰 `.github/workflows/*.yml`，所以每次同步上游都不会产生冲突；哪天真要跑（例如给上游提 PR、在本 fork 上验 CI）点 Enable workflow 即可。本 fork 自己的 `release-zh.yml` 不受影响。
+- **已发布**：`zh-v0.3.1`、`zh-v0.3.2`、`zh-v0.5.1`（2026-11-20，对应上游 0.5.1）。仓库规范名是 `wenzhuoduan/zorvik_zh-cn`（旧名 `zorvik_zh_cn`/`zorvik_zh-CN` 靠 GitHub 重定向，remote 里已经改成规范名，否则每次推送都会打印 "This repository moved"）。
 
 ## 10. 新会话交接
 
